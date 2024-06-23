@@ -1,57 +1,47 @@
-import random
-import string
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+from drf_yasg.utils import swagger_auto_schema
+from .serializers import question_schema, response_schema
 
 
 class ChatBot:
     def __init__(self):
         self.chatmodel = ChatOpenAI(
             model="gpt-3.5-turbo",
-            temperature = 0,
-            openai_api_key = "sk-student-group-1-key-TO4Cg5exvtuWKqfwRK2hT3BlbkFJ5rE7Cy1yjfTQYgN2hDbX"
+            temperature=0,
+            openai_api_key="sk-student-group-1-key-TO4Cg5exvtuWKqfwRK2hT3BlbkFJ5rE7Cy1yjfTQYgN2hDbX"
         )
 
     def answer(self, question):
         content = self.chain(question)
-        return content   
-     
+        return content
+
     def chain(self, question):
         prompt = ChatPromptTemplate.from_template("The user's request is {question}")
-        message = prompt.format(question = question)
+        message = prompt.format(question=question)
         llm = self.chatmodel
         response = llm.invoke(message)
         print(response.content)
         return response.content
 
+
 class ChatAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id="chat_with_bot",
+        operation_summary="Chat with the bot",
+        operation_description="Send a question to the bot and receive an answer",
+        request_body=question_schema,
+        responses={200: response_schema}
+    )
     def post(self, request, *args, **kwargs):
-        """处理 POST 请求，返回随机字符串"""
-        print("request", request.data)
-        question = request.data['question']
-        print("question", question)
+        """处理 POST 请求，返回聊天机器人的回答"""
+        question = request.data.get('question')
+        if not question:
+            return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
+
         bot = ChatBot()
         feedback = bot.answer(question)
         return Response({"answer": feedback}, status=status.HTTP_200_OK)
-
-def generate_random_string(length=10):
-    """生成一个指定长度的随机字符串"""
-    letters = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters) for i in range(length))
-
-
-class GetAllChatAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        """处理 GET 请求，返回固定字符串"""
-        chat_contents = [{"id": i, "chatContent": chr(96 + i) * 10} for i in range(1, 27)]
-        return Response(chat_contents, status=status.HTTP_200_OK)
-
-
-class RandomStringAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        """处理 POST 请求，返回随机字符串"""
-        random_string = generate_random_string()
-        return Response({"random_string": random_string}, status=status.HTTP_200_OK)
