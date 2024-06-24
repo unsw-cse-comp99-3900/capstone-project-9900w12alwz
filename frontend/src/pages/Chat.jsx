@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
-import 'primereact/resources/themes/viva-light/theme.css';
+import { useNavigate } from 'react-router-dom';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import './Chat.css';
@@ -14,6 +14,7 @@ const Chat = () => {
   const [showBubble, setShowBubble] = useState(true);
   const [sidebarItems, setSidebarItems] = useState([]);
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     // const initialMessages = [
@@ -109,6 +110,12 @@ const Chat = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarVisible]);
 
+  const navigate = useNavigate();
+
+  const goToAdmin = () => {
+    navigate('/admin');
+  };
+
   return (
     <div className="chat-container">
       <Sidebar
@@ -129,12 +136,22 @@ const Chat = () => {
           </div>
           <div className={`main-tool-bar-misc`}>
             <ThemeSwitcher/>
+            <Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-rounded p-button-icon-only"/>
           </div>
         </div>
         <div className="messages">
-          {messages.map((msg, index) => (
-            <ChatMessage key={index} message={msg.text} isUser={msg.isUser} showBubble={showBubble}/>
-          ))}
+          {messages.length === 0 ? (
+            <div className="greeting-container">
+              <i className={`pi pi-comments greeting-icon`}/>
+              <h2>Welcome to the EA Assist</h2>
+              <p>Start by typing your message in the input box below.</p>
+            </div>
+          ) : (
+            messages.map((msg, index) => (
+              <ChatMessage key={index} message={msg.text} isUser={msg.isUser} showBubble={showBubble}/>
+            ))
+          )}
+          <div ref={messagesEndRef}/>
         </div>
         <div className="input-box-container">
           <InputBox onSend={handleSend} onUpload={handleUpload}/>

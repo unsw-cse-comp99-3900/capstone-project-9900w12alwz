@@ -7,13 +7,15 @@ const InputBox = ({ onSend, onUpload }) => {
   const [message, setMessage] = React.useState('');
 
   const handleSendClick = () => {
-    if (onSend) {
-      onSend(message);
-    }
-    setMessage('');
-    const inputElement = document.getElementById('messageInput');
-    if (inputElement) {
-      inputElement.style.height = 'auto';
+    if (message.trim() !== '') {
+      if (onSend) {
+        onSend(message);
+      }
+      setMessage('');
+      const inputElement = document.getElementById('messageInput');
+      if (inputElement) {
+        inputElement.style.height = '35px';
+      }
     }
   };
 
@@ -43,7 +45,11 @@ const InputBox = ({ onSend, onUpload }) => {
         autoResize
         onKeyDown={handleKeyDown}
       />
-      <Button icon="pi pi-send" className="p-button-rounded p-button-text send-btn" onClick={handleSendClick} />
+      <Button icon="pi pi-send"
+              className="p-button-rounded p-button-text send-btn"
+              onClick={handleSendClick}
+              disabled={message.trim() === ''}
+      />
     </div>
   );
 };

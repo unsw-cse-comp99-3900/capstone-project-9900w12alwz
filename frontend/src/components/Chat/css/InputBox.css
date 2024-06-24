@@ -15,6 +15,7 @@
     border-radius: 25px;
     outline: none;
     resize: none;
+    height: 35px;
     /*overflow-y: hidden;*/
     background-color: var(--surface-a);
 }

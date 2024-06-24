@@ -108,3 +108,19 @@ html, body {
         padding: 10px 5%;
     }
 }
+
+/* Greeting container styles */
+.greeting-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.greeting-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
