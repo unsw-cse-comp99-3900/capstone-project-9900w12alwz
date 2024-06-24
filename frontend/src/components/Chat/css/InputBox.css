@@ -1,0 +1,33 @@
+
+
+.input-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    padding: 5px 5px;
+    background-color: var(--surface-a);
+}
+
+.message-input {
+    flex: 1;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    resize: none;
+    /*overflow-y: hidden;*/
+    background-color: var(--surface-a);
+}
+
+.upload-btn,
+.send-btn {
+    margin: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.upload-btn .p-button-icon,
+.send-btn .p-button-icon {
+    font-size: 1.2em;
+}
