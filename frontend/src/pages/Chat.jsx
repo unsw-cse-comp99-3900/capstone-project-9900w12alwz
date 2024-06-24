@@ -36,12 +36,24 @@ const Chat = () => {
   }, []);
 
   // Simulate conversation
-  const handleSend = (message) => {
+  const handleSend = async (message) => {
     setMessages(prevMessages => [...prevMessages, { text: message, isUser: true }]);
 
-    setTimeout(() => {
-      setMessages(prevMessages => [...prevMessages, { text: `Echo: ${message}`, isUser: false }]);
-    }, 1000);
+    try {
+      const response = await fetch('http://localhost:8000/api/chat/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ question: message })
+      });
+      const data = await response.json();
+      if (data && data.answer) {
+        setMessages(prevMessages => [...prevMessages, { text: data.answer, isUser: false }]);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
   // Upload file
