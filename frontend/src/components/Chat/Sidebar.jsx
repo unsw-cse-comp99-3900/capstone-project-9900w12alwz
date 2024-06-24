@@ -2,9 +2,9 @@ import React, { useRef } from 'react';
 import { Button } from 'primereact/button';
 import { ListBox } from 'primereact/listbox';
 import { Menu } from 'primereact/menu';
-import itemsData from './items.json';
 import './css/Sidebar.css';
-const Sidebar = ({ isVisible, handlePopupClick, handleOptionClick, onScroll, toggleSidebar }) => {
+
+const Sidebar = ({ items, isVisible, handlePopupClick, handleOptionClick, onScroll, toggleSidebar }) => {
   const menuRef = useRef(null);
   const selectedItemRef = useRef(null);
 
@@ -23,12 +23,15 @@ const Sidebar = ({ isVisible, handlePopupClick, handleOptionClick, onScroll, tog
         <div className="sidebar-header">
         </div>
         <div className="sidebar-content">
-          <ListBox options={itemsData} itemTemplate={itemTemplate} className="p-mt-3"/>
+          <ListBox options={items} itemTemplate={itemTemplate} className="p-mt-3"/>
         </div>
         <Menu
           model={[
-            { label: 'Option 1', command: handleOptionClick },
-            { label: 'Option 2' }
+            { label: 'Edit', command: handleOptionClick },
+            {
+              label: 'Delete',
+              command: () => handleOptionClick(selectedItemRef.current)
+            }
           ]}
           popup
           ref={menuRef}

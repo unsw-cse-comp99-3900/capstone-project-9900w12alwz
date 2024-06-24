@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
-import 'primereact/resources/themes/viva-dark/theme.css';
+import 'primereact/resources/themes/viva-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import './Chat.css';
@@ -12,32 +12,44 @@ import InputBox from "../components/Chat/InputBox";
 const Chat = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth >= 600);
   const [showBubble, setShowBubble] = useState(true);
+  const [sidebarItems, setSidebarItems] = useState([]);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    // 模拟后端返回初始消息
-    const initialMessages = [
-      { text: 'Hello!', isUser: false },
-      { text: 'Hi there!', isUser: true }
+    // const initialMessages = [
+    //   { text: 'Hello!', isUser: false },
+    //   { text: 'Hi there!', isUser: true }
+    // ];
+    // setTimeout(() => {
+    //   setMessages(initialMessages);
+    // }, 1000);
+
+    // Simulate getting the chat list
+    const initialSidebarItems = [
+      { label: 'Item 1', id: 1 },
+      { label: 'Item 2', id: 2 },
+      { label: 'Item 3', id: 3 }
     ];
     setTimeout(() => {
-      setMessages(initialMessages);
-    }, 1000); // 1秒延时模拟后端请求
+      setSidebarItems(initialSidebarItems);
+    }, 1000);
   }, []);
 
+  // Simulate conversation
   const handleSend = (message) => {
     setMessages(prevMessages => [...prevMessages, { text: message, isUser: true }]);
 
-    // 模拟后端返回
     setTimeout(() => {
       setMessages(prevMessages => [...prevMessages, { text: `Echo: ${message}`, isUser: false }]);
-    }, 1000); // 1秒延时模拟后端响应
+    }, 1000);
   };
 
+  // Upload file
   const handleUpload = () => {
     console.log('Upload clicked');
   };
 
+  // Get the real window height
   const updateVh = () => {
     const vh = window.innerHeight;
     document.documentElement.style.setProperty('--doc-height', `${vh}px`);
@@ -49,24 +61,29 @@ const Chat = () => {
     return () => window.removeEventListener('resize', updateVh);
   }, []);
 
+  // Toggle sidebar
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
 
+  // Handle pop click on sidebar
   const handlePopupClick = (event, item, menuRef, selectedItemRef) => {
     event.preventDefault();
     selectedItemRef.current = item;
     menuRef.current.toggle(event);
   };
 
-  const handleOptionClick = () => {
-    console.log('Option clicked');
+  // Handle option click in sidebar
+  const handleOptionClick = (item) => {
+    setSidebarItems(prevItems => prevItems.filter(i => i.id !== item.id));
   };
 
+  // Prevent accidental scrolling of the main interface
   const stopPropagation = (e) => {
     e.stopPropagation();
   };
 
+  // Sidebar auto hide
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 600 && isSidebarVisible) {
@@ -83,6 +100,7 @@ const Chat = () => {
   return (
     <div className="chat-container">
       <Sidebar
+        items={sidebarItems}
         isVisible={isSidebarVisible}
         handlePopupClick={handlePopupClick}
         handleOptionClick={handleOptionClick}
