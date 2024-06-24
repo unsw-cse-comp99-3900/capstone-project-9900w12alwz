@@ -110,6 +110,10 @@ const Chat = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarVisible]);
 
+  const resetCoonversation = () => {
+    setMessages([])
+  }
+
   const navigate = useNavigate();
 
   const goToAdmin = () => {
@@ -118,25 +122,26 @@ const Chat = () => {
 
   return (
     <div className="chat-container">
-      <Sidebar
-        items={sidebarItems}
-        isVisible={isSidebarVisible}
-        handlePopupClick={handlePopupClick}
-        handleOptionClick={handleOptionClick}
-        onScroll={stopPropagation}
-        toggleSidebar={toggleSidebar}
-      />
+      {/*<Sidebar*/}
+      {/*  items={sidebarItems}*/}
+      {/*  isVisible={isSidebarVisible}*/}
+      {/*  handlePopupClick={handlePopupClick}*/}
+      {/*  handleOptionClick={handleOptionClick}*/}
+      {/*  onScroll={stopPropagation}*/}
+      {/*  toggleSidebar={toggleSidebar}*/}
+      {/*/>*/}
       <div className={`main-content ${isSidebarVisible ? 'with-sidebar' : ''}`}>
         <div className={`main-content-header ${!isSidebarVisible ? 'collapsed' : ''}`}>
         </div>
         <div className="main-tool-bar">
           <div className={`main-tool-bar-tools ${!isSidebarVisible ? 'collapsed' : ''}`}>
-            <Button icon="pi pi-bars" onClick={toggleSidebar} className="toggle-sidebar-btn"/>
-            <Button icon="pi pi-pen-to-square" className="new-chat-btn"/>
+            {/*<Button icon="pi pi-bars" onClick={toggleSidebar} className="toggle-sidebar-btn"/>*/}
+            <Button icon="pi pi-pen-to-square" className="new-chat-btn" onClick={resetCoonversation}/>
+            <ThemeSwitcher/>
           </div>
           <div className={`main-tool-bar-misc`}>
-            <ThemeSwitcher/>
-            <Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-rounded p-button-icon-only"/>
+            {/*<ThemeSwitcher/>*/}
+            {/*<Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-rounded p-button-icon-only"/>*/}
           </div>
         </div>
         <div className="messages">

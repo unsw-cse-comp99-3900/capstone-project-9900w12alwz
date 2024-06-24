@@ -45,6 +45,10 @@
   --maskbg: rgba(0, 0, 0, 0.4);
   --highlight-bg: rgba(158, 173, 230, 0.16);
   --highlight-text-color: #9eade6;
+  --custom-chat-message-bot-text-color: white;
+  --custom-chat-message-bot-background-color:#242424;
+  --custom-chat-message-user-text-color: white;
+  --custom-chat-message-user-background-color:#5472d4;
   color-scheme: dark;
 }
 

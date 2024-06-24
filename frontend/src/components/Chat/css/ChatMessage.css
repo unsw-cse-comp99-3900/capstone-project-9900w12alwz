@@ -13,17 +13,17 @@
 }
 
 .message-container.bubble .message {
-    background-color: var(--primary-color);
+    background-color: var(--custom-chat-message-bot-background-color);
     border-radius: 10px;
-    color: white;
+    color: var(--custom-chat-message-bot-text-color);
     padding: 10px;
     max-width: 80%;
     word-wrap: break-word;
 }
 
 .message-container.user.bubble .message {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--custom-chat-message-user-background-color);
+    color: var(--custom-chat-message-user-text-color);
 }
 
 .message-container.other.bubble .message {
