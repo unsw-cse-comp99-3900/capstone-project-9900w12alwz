@@ -1,0 +1,91 @@
+:root {
+    --doc-height: 100%;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-container {
+    display: flex;
+    height: var(--doc-height);
+    position: relative;
+}
+
+.sidebar {
+    width: 250px;
+    background: #f4f4f4;
+    padding: 1em;
+    transition: width 0.3s ease-in-out;
+}
+
+.sidebar.collapsed {
+    width: 50px;
+    padding: 1em 0.5em;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1em;
+}
+
+.scroll-panel {
+    height: calc(100vh - 4em);
+    overflow-y: auto;
+}
+
+.list-box-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5em 0;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 1em;
+    overflow-y: auto;
+}
+
+.table-container {
+    min-width: 50rem;
+    margin-top: 1em;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+.button-group .p-button {
+    margin-right: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--surface-100);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--surface-300);
+}
