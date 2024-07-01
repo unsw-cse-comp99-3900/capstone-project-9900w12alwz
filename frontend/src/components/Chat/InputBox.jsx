@@ -1,28 +1,36 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
+import { FileUpload } from 'primereact/fileupload';
 import './css/InputBox.css';
 
 const InputBox = ({ onSend, onUpload }) => {
-  const [message, setMessage] = React.useState('');
+  const [message, setMessage] = useState('');
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const fileUploadRef = useRef(null);
 
   const handleSendClick = () => {
-    if (message.trim() !== '') {
-      if (onSend) {
-        onSend(message);
-      }
-      setMessage('');
-      const inputElement = document.getElementById('messageInput');
-      if (inputElement) {
-        inputElement.style.height = '35px';
-      }
+    const trimmedMessage = message.trim();
+    const messageToSend = trimmedMessage || uploadedFiles.map(file => file.name).join(', ');
+
+    if (messageToSend || uploadedFiles.length > 0) {
+      onSend?.(messageToSend);
+      console.log('Files sent to backend:', uploadedFiles);
+      resetInput();
     }
   };
 
-  const handleUploadClick = () => {
-    if (onUpload) {
-      onUpload();
-    }
+  const resetInput = () => {
+    setMessage('');
+    setUploadedFiles([]);
+    document.getElementById('messageInput').style.height = '35px';
+  };
+
+  const handleUpload = (e) => {
+    const files = e.files;
+    setUploadedFiles(files);
+    onUpload?.(files);
+    fileUploadRef.current.clear();
   };
 
   const handleKeyDown = (e) => {
@@ -32,24 +40,55 @@ const InputBox = ({ onSend, onUpload }) => {
     }
   };
 
+  const handleDeleteFile = (index) => {
+    setUploadedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+  };
+
   return (
-    <div className="input-box">
-      <Button icon="pi pi-paperclip" className="p-button-rounded p-button-text upload-btn" onClick={handleUploadClick} />
-      <InputTextarea
-        id="messageInput"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        className="message-input"
-        placeholder="Type your message..."
-        rows={1}
-        autoResize
-        onKeyDown={handleKeyDown}
-      />
-      <Button icon="pi pi-send"
-              className="p-button-rounded p-button-text send-btn"
-              onClick={handleSendClick}
-              disabled={message.trim() === ''}
-      />
+    <div className="input-box-container">
+      {uploadedFiles.length > 0 && (
+        <div className="uploaded-files">
+          {uploadedFiles.map((file, index) => (
+            <div key={index} className="file-item">
+              {file.name}
+              <Button
+                icon="pi pi-times"
+                className="p-button-text p-button-danger"
+                onClick={() => handleDeleteFile(index)}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="input-box">
+        <FileUpload
+          ref={fileUploadRef}
+          mode="basic"
+          name="files[]"
+          accept="*"
+          customUpload
+          chooseLabel=""
+          chooseOptions={{ icon: 'pi pi-paperclip', className: 'p-button-rounded p-button-text upload-btn' }}
+          onSelect={handleUpload}
+          auto
+        />
+        <InputTextarea
+          id="messageInput"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="message-input"
+          placeholder="Type your message..."
+          rows={1}
+          autoResize
+          onKeyDown={handleKeyDown}
+        />
+        <Button
+          icon="pi pi-send"
+          className="p-button-rounded p-button-text send-btn"
+          onClick={handleSendClick}
+          disabled={message.trim() === '' && uploadedFiles.length === 0}
+        />
+      </div>
     </div>
   );
 };

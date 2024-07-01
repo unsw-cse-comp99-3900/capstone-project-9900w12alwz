@@ -1,4 +1,25 @@
+.input-box-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
 
+.uploaded-files {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px 0;
+    margin-bottom: 5px;
+}
+
+.file-item {
+    background-color: var(--surface-b);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
 
 .input-box {
     display: flex;
@@ -16,7 +37,6 @@
     outline: none;
     resize: none;
     height: 35px;
-    /*overflow-y: hidden;*/
     background-color: var(--surface-a);
 }
 
