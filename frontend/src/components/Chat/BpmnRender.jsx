@@ -81,7 +81,7 @@ const BpmnRender = ({ bpmnXML }) => {
 
   return (
     <div>
-      <div ref={canvasRef} style={{ width: '100%', height: '100%' }}/>
+      <div className="bpmn-canvas" ref={canvasRef}/>
       <Button
         icon="pi pi-download"
         onClick={exportToImage}
