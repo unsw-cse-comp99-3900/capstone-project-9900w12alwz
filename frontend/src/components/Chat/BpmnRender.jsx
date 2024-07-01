@@ -1,11 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import Viewer from 'bpmn-js/lib/Viewer';
-import { Button } from 'primereact/button';
 import './css/BpmnRender.css';
 
-const BpmnRender = ({ bpmnXML }) => {
+const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
   const canvasRef = useRef(null);
   const viewerRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    exportToImage
+  }));
 
   useEffect(() => {
     viewerRef.current = new Viewer({
@@ -49,13 +52,13 @@ const BpmnRender = ({ bpmnXML }) => {
     };
 
     window.addEventListener('resize', handleResize);
-    //
-    // return () => {
-    //   window.removeEventListener('resize', handleResize);
-    //   if (viewerRef.current) {
-    //     viewerRef.current.destroy();
-    //   }
-    // };
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (viewerRef.current) {
+        viewerRef.current.destroy();
+      }
+    };
   }, [bpmnXML]);
 
   const exportToImage = async () => {
@@ -82,13 +85,8 @@ const BpmnRender = ({ bpmnXML }) => {
   return (
     <div>
       <div className="bpmn-canvas" ref={canvasRef}/>
-      <Button
-        icon="pi pi-download"
-        onClick={exportToImage}
-        className="p-button-rounded p-button-secondary"
-      />
     </div>
   );
-};
+});
 
 export default BpmnRender;

@@ -1,39 +1,48 @@
+/* Container for individual messages */
 .message-container {
     display: flex;
     align-items: flex-start;
     margin: 10px;
 }
 
+/* Align user messages to the right */
 .message-container.user {
     justify-content: flex-end;
 }
 
+/* Align other messages to the left */
 .message-container.other {
     justify-content: flex-start;
 }
 
+/* Message bubble styles */
 .message-container.bubble .message {
-    background-color: var(--custom-chat-message-bot-background-color);
     border-radius: 10px;
-    color: var(--custom-chat-message-bot-text-color);
     padding: 10px;
     max-width: 80%;
     word-wrap: break-word;
 }
 
+/* User message bubble styles */
 .message-container.user.bubble .message {
     background-color: var(--custom-chat-message-user-background-color);
     color: var(--custom-chat-message-user-text-color);
 }
 
+/* Other message bubble styles */
 .message-container.other.bubble .message {
+    background-color: var(--custom-chat-message-bot-background-color);
+    color: var(--custom-chat-message-bot-text-color);
     font-size: 1.3rem;
 }
 
-.message {
-    display: inline-block;
+/* Message block for grouping messages and tool buttons */
+.message-block {
+    display: flex;
+    flex-direction: column;
 }
 
+/* Avatar styling for messages */
 .message-avatar {
     width: 35px;
     height: 35px;
@@ -41,21 +50,35 @@
     flex-shrink: 0;
 }
 
+/* Container for all messages */
 .messages {
     flex: 1;
     overflow-y: auto;
+    display: inline-block;
     scroll-behavior: smooth;
     padding: 10px 15%;
     box-sizing: border-box;
     transition: padding 0.3s ease-in-out;
 }
 
+/* Responsive padding adjustment */
 @media (max-width: 800px) {
     .messages {
         padding: 10px 5%;
     }
 }
 
+.message-tool-button-container{
+    margin-top: 8px;
+}
+
+.message-tool-button{
+    width: 28px;
+    height: 28px;
+    padding: 0;
+}
+
+/* Fade in animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -65,6 +88,7 @@
     }
 }
 
+/* Fade out animation */
 @keyframes fadeOut {
     from {
         opacity: 1;
@@ -74,6 +98,7 @@
     }
 }
 
+/* Loading message styling */
 .loading-message {
     display: flex;
     align-items: center;
