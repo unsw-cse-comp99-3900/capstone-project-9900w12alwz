@@ -9,21 +9,107 @@ import ThemeSwitcher from "../components/ThemeSwitcher";
 import ChatMessage from "../components/Chat/ChatMessage";
 import InputBox from "../components/Chat/InputBox";
 
+import { post } from '../api';
+
 const Chat = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth >= 600);
   const [showBubble, setShowBubble] = useState(true);
   const [sidebarItems, setSidebarItems] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // const initialMessages = [
-    //   { text: 'Hello!', isUser: false },
-    //   { text: 'Hi there!', isUser: true }
-    // ];
-    // setTimeout(() => {
-    //   setMessages(initialMessages);
-    // }, 1000);
+    const treeData = {
+      key: "1.Strategic Capabilities",
+      label: "1.Strategic Capabilities",
+      children: [
+        {
+          key: "1.1 Product Strategy",
+          label: "1.1 Product Strategy",
+          children: [
+            { key: "1.1.1 Market Research", label: "1.1.1 Market Research" },
+            { key: "1.1.2 Competitive Analysis", label: "1.1.2 Competitive Analysis" }
+          ]
+        },
+        {
+          key: "1.2 Business Development",
+          label: "1.2 Business Development",
+          children: [
+            { key: "1.2.1 Partnership Management", label: "1.2.1 Partnership Management" },
+            { key: "1.2.2 Customer Relationship Management", label: "1.2.2 Customer Relationship Management" }
+          ]
+        }
+      ]
+    };
+
+    const bpmnSample = `
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_0jjyxz7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="17.7.1">
+  <bpmn:process id="Process_0xl4bnu" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_15y1osc" />
+    <bpmn:endEvent id="Event_06j7amu" />
+    <bpmn:endEvent id="Event_1hq6ijz" />
+    <bpmn:exclusiveGateway id="Gateway_0u3gh9h" />
+    <bpmn:intermediateThrowEvent id="Event_1kanrdd" />
+    <bpmn:intermediateThrowEvent id="Event_1jp3mgo" />
+    <bpmn:intermediateThrowEvent id="Event_1ysq5jz" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0xl4bnu">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_15y1osc">
+        <dc:Bounds x="192" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06j7amu_di" bpmnElement="Event_06j7amu">
+        <dc:Bounds x="392" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hq6ijz_di" bpmnElement="Event_1hq6ijz">
+        <dc:Bounds x="612" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0u3gh9h_di" bpmnElement="Gateway_0u3gh9h" isMarkerVisible="true">
+        <dc:Bounds x="765" y="85" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kanrdd_di" bpmnElement="Event_1kanrdd">
+        <dc:Bounds x="952" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1jp3mgo_di" bpmnElement="Event_1jp3mgo">
+        <dc:Bounds x="1142" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ysq5jz_di" bpmnElement="Event_1ysq5jz">
+        <dc:Bounds x="1332" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
+    `
+
+    const initialMessages = [
+      {
+        content: 'Generate a capability map',
+        isUser: true,
+        type: 'text'
+      },
+      {
+        content: treeData,
+        isUser: false,
+        type: 'capabilityMap'
+      },
+      {
+        content: 'Generate a BPMN',
+        isUser: true,
+        type: 'text'
+      },
+      {
+        content: bpmnSample,
+        isUser: false,
+        type: 'bpmn'
+      }
+    ];
+
+    setTimeout(() => {
+      setMessages(initialMessages);
+    }, 1000);
 
     // Simulate getting the chat list
     const initialSidebarItems = [
@@ -39,21 +125,18 @@ const Chat = () => {
   // Simulate conversation
   const handleSend = async (message) => {
     setMessages(prevMessages => [...prevMessages, { text: message, isUser: true }]);
+    setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ question: message })
-      });
-      const data = await response.json();
+      const response = await post('/chat/', { question: message });
+      const data = response.data;
       if (data && data.answer) {
         setMessages(prevMessages => [...prevMessages, { text: data.answer, isUser: false }]);
       }
     } catch (error) {
       console.error('Error sending message:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -110,7 +193,7 @@ const Chat = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarVisible]);
 
-  const resetCoonversation = () => {
+  const resetConversation = () => {
     setMessages([])
   }
 
@@ -136,7 +219,7 @@ const Chat = () => {
         <div className="main-tool-bar">
           <div className={`main-tool-bar-tools ${!isSidebarVisible ? 'collapsed' : ''}`}>
             {/*<Button icon="pi pi-bars" onClick={toggleSidebar} className="toggle-sidebar-btn"/>*/}
-            <Button icon="pi pi-pen-to-square" className="new-chat-btn" onClick={resetCoonversation}/>
+            <Button icon="pi pi-pen-to-square" className="new-chat-btn" onClick={resetConversation}/>
             <ThemeSwitcher/>
           </div>
           <div className={`main-tool-bar-misc`}>
@@ -153,8 +236,11 @@ const Chat = () => {
             </div>
           ) : (
             messages.map((msg, index) => (
-              <ChatMessage key={index} message={msg.text} isUser={msg.isUser} showBubble={showBubble}/>
+              <ChatMessage key={index} message={msg} isUser={msg.isUser} showBubble={showBubble}/>
             ))
+          )}
+          {isLoading && (
+            <ChatMessage key="loading" message="Loading..." isUser={false} isLoading={true} showBubble={showBubble}/>
           )}
           <div ref={messagesEndRef}/>
         </div>
