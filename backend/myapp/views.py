@@ -1,48 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain.memory import ChatMessageHistory
-
 from drf_yasg.utils import swagger_auto_schema
-from .serializers import question_schema, response_schema
-
-class ChatBot:
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(ChatBot, cls).__new__(cls)
-            cls._instance.initialize_bot()
-        return cls._instance
-
-    def initialize_bot(self):
-        self.chatmodel = ChatOpenAI(
-            model="gpt-3.5-turbo",
-            temperature=0,
-            openai_api_key="sk-student-group-1-key-TO4Cg5exvtuWKqfwRK2hT3BlbkFJ5rE7Cy1yjfTQYgN2hDbX"
-        )
-        self.chat_history = ChatMessageHistory()
-
-    def answer(self, question):
-        content = self.chain(question)
-        return content
-
-    def chain(self, question):
-        prompt = ChatPromptTemplate.from_template("The user's request is {question}")
-        message = prompt.format(question=question)
-        self.chat_history.add_user_message(message)
-
-        llm = self.chatmodel
-        response = llm.invoke(self.chat_history.messages)
-        self.chat_history.add_ai_message(response)
-
-        print(response.content)
-        print(self.chat_history.messages)
-
-        return response.content
-
+from .models import ChatBot, Prompt
+from .serializers import PromptSerializer, question_schema, response_schema
 
 class ChatAPIView(APIView):
     bot = ChatBot()  # Singleton instance
@@ -62,3 +23,91 @@ class ChatAPIView(APIView):
 
         feedback = self.bot.answer(question)
         return Response({"answer": feedback}, status=status.HTTP_200_OK)
+
+class PromptListCreateAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id="list_prompts",
+        operation_summary="List prompts",
+        operation_description="Retrieve a list of all prompts.",
+        responses={200: PromptSerializer(many=True), 500: "Internal Server Error"}
+    )
+    def get(self, request, *args, **kwargs):
+        try:
+            prompts = Prompt.objects.all()
+            serializer = PromptSerializer(prompts, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_id="create_prompt",
+        operation_summary="Create a new prompt",
+        operation_description="Create a new prompt with the provided text.",
+        request_body=PromptSerializer,
+        responses={200: PromptSerializer, 500: "Internal Server Error"}
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = PromptSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PromptDetailAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id="retrieve_prompt",
+        operation_summary="Retrieve a prompt",
+        operation_description="Retrieve a prompt by its ID.",
+        responses={200: PromptSerializer, 500: "Internal Server Error"}
+    )
+    def get(self, request, id, *args, **kwargs):
+        try:
+            prompt = Prompt.objects.get(pk=id)
+            serializer = PromptSerializer(prompt)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Prompt.DoesNotExist:
+            return Response({"error": "Prompt not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_id="update_prompt",
+        operation_summary="Update a prompt",
+        operation_description="Update the text of a prompt by its ID.",
+        request_body=PromptSerializer,
+        responses={200: PromptSerializer, 500: "Internal Server Error"}
+    )
+    def put(self, request, id, *args, **kwargs):
+        try:
+            prompt = Prompt.objects.get(pk=id)
+            serializer = PromptSerializer(prompt, data=request.data)
+            if serializer.is_valid():
+                try:
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                except Exception as e:
+                    return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Prompt.DoesNotExist:
+            return Response({"error": "Prompt not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_id="delete_prompt",
+        operation_summary="Delete a prompt",
+        operation_description="Delete a prompt by its ID.",
+        responses={200: "No Content", 500: "Internal Server Error"}
+    )
+    def delete(self, request, id, *args, **kwargs):
+        try:
+            prompt = Prompt.objects.get(pk=id)
+            prompt.delete()
+            return Response(status=status.HTTP_200_OK)
+        except Prompt.DoesNotExist:
+            return Response({"error": "Prompt not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
