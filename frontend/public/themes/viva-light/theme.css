@@ -50,6 +50,8 @@
   --custom-chat-message-user-text-color: white;
   --custom-chat-message-user-background-color:#5472d4;
   --custom-chat-message-bpmn-background-color:#FFFFFF;
+  --custom-chat-message-bot-tool-btn-color: #171717;
+  --custom-chat-message-bot-tool-btn-background-color:#f7f7f7;
   color-scheme: light;
 }
 

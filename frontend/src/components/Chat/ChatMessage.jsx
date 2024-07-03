@@ -3,6 +3,7 @@ import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { Parser } from '@json2csv/plainjs';
+import { IconFileTypeSvg, IconFileTypeCsv } from '@tabler/icons-react';
 import './css/ChatMessage.css';
 import BpmnRender from "./BpmnRender";
 
@@ -56,15 +57,17 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
     switch (message.type) {
       case 'capabilityMap':
         return (
-          <div className="message-block">
-            <div className="message"><Tree value={[message.content]}/>
+          <div className="message-block" style={{ minWidth: '50%' }}>
+            <div className="message"><Tree value={[message.content]} style={{ fontSize: '1rem' }} />
             </div>
             <div className="message-tool-button-container">
               <Button
                 className="p-button-rounded p-button-icon-only message-tool-button"
-                icon="pi pi-download"
                 onClick={handleDownloadCsv}
-              />
+              >
+                <IconFileTypeCsv className="message-tool-button-icon" size={20}/>
+              </Button>
+
             </div>
           </div>
         );
@@ -77,17 +80,25 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
             <div className="message-tool-button-container">
               <Button
                 className="p-button-rounded p-button-icon-only message-tool-button"
-                icon="pi pi-download"
                 onClick={handleDownloadSvg}
-              />
+              >
+                <IconFileTypeSvg className="message-tool-button-icon" size={20}/>
+              </Button>
             </div>
           </div>
         );
-      case 'text':
+      case 'file':
+        return (
+          <div className="message">
+            <div style={{ minHeight: "50px"}}>
+              File: {message.content}
+            </div>
+          </div>
+        )
       default:
         return (
           <div className="message">
-            {message.content}
+          {message.content}
           </div>
         );
     }

@@ -73,9 +73,15 @@
 }
 
 .message-tool-button{
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
+    background: var(--custom-chat-message-bot-tool-btn-background-color);
+    border: var(--custom-chat-message-bot-tool-btn-background-color);
     padding: 0;
+}
+
+.message-tool-button-icon{
+    color: var(--custom-chat-message-bot-tool-btn-color);
 }
 
 /* Fade in animation */

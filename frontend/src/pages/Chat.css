@@ -9,14 +9,14 @@
 }
 
 html, body {
-    height: 100%;
+    height: var(--doc-height);
     margin: 0;
     padding: 0;
 }
 
 .chat-container {
     display: flex;
-    height: var(--doc-height);
+    height: calc(var(--doc-height) - 1px);
     position: relative;
 }
 
@@ -126,4 +126,8 @@ html, body {
     font-size: 3rem;
     margin-bottom: 1rem;
     color: var(--primary-color);
+}
+
+.messages{
+    scrollbar-gutter: stable both-edges;
 }

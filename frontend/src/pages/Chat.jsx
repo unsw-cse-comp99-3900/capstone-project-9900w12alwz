@@ -8,14 +8,16 @@ import Sidebar from '../components/Chat/Sidebar';
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import ChatMessage from "../components/Chat/ChatMessage";
 import InputBox from "../components/Chat/InputBox";
-
 import { post } from '../api';
 
 const Chat = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth >= 600);
   const [showBubble, setShowBubble] = useState(true);
   const [sidebarItems, setSidebarItems] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    const savedMessages = localStorage.getItem('chatMessages');
+    return savedMessages ? JSON.parse(savedMessages) : [];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -81,7 +83,6 @@ const Chat = () => {
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
-
     `
 
     const initialMessages = [
@@ -112,26 +113,40 @@ const Chat = () => {
     }, 1000);
 
     // Simulate getting the chat list
-    const initialSidebarItems = [
-      { label: 'Item 1', id: 1 },
-      { label: 'Item 2', id: 2 },
-      { label: 'Item 3', id: 3 }
-    ];
-    setTimeout(() => {
-      setSidebarItems(initialSidebarItems);
-    }, 1000);
+    // const initialSidebarItems = [
+    //   { label: 'Item 1', id: 1 },
+    //   { label: 'Item 2', id: 2 },
+    //   { label: 'Item 3', id: 3 }
+    // ];
+    // setTimeout(() => {
+    //   setSidebarItems(initialSidebarItems);
+    // }, 1000);
   }, []);
 
-  // Simulate conversation
-  const handleSend = async (message) => {
-    setMessages(prevMessages => [...prevMessages, { text: message, isUser: true }]);
+  useEffect(() => {
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
+  }, [messages]);
+
+  const addMessage = (message) => {
+    setMessages(prevMessages => [...prevMessages, message]);
+  };
+
+  const handleSend = async (fileMessages, textMessage) => {
+    if (fileMessages.length > 0) {
+      fileMessages.forEach(fileMessage => {
+        addMessage({ content: fileMessage, isUser: true, type: 'file' });
+      });
+    }
+    if (textMessage) {
+      addMessage({ content: textMessage, isUser: true, type: 'text' });
+    }
     setIsLoading(true);
 
     try {
-      const response = await post('/chat/', { question: message });
+      const response = await post('/chat/', { question: textMessage });
       const data = response.data;
       if (data && data.answer) {
-        setMessages(prevMessages => [...prevMessages, { text: data.answer, isUser: false }]);
+        addMessage({ content: data.answer, isUser: false });
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -140,12 +155,10 @@ const Chat = () => {
     }
   };
 
-  // Upload file
-  const handleUpload = () => {
-    console.log('Upload clicked');
+  const handleUpload = (files) => {
+    console.log('Upload clicked:', files);
   };
 
-  // Get the real window height
   const updateVh = () => {
     const vh = window.innerHeight;
     document.documentElement.style.setProperty('--doc-height', `${vh}px`);
@@ -157,29 +170,24 @@ const Chat = () => {
     return () => window.removeEventListener('resize', updateVh);
   }, []);
 
-  // Toggle sidebar
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
 
-  // Handle pop click on sidebar
   const handlePopupClick = (event, item, menuRef, selectedItemRef) => {
     event.preventDefault();
     selectedItemRef.current = item;
     menuRef.current.toggle(event);
   };
 
-  // Handle option click in sidebar
   const handleOptionClick = (item) => {
     setSidebarItems(prevItems => prevItems.filter(i => i.id !== item.id));
   };
 
-  // Prevent accidental scrolling of the main interface
   const stopPropagation = (e) => {
     e.stopPropagation();
   };
 
-  // Sidebar auto hide
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 600 && isSidebarVisible) {
@@ -194,8 +202,9 @@ const Chat = () => {
   }, [isSidebarVisible]);
 
   const resetConversation = () => {
-    setMessages([])
-  }
+    setMessages([]);
+    localStorage.removeItem('chatMessages');
+  };
 
   const navigate = useNavigate();
 
@@ -205,26 +214,16 @@ const Chat = () => {
 
   return (
     <div className="chat-container">
-      {/*<Sidebar*/}
-      {/*  items={sidebarItems}*/}
-      {/*  isVisible={isSidebarVisible}*/}
-      {/*  handlePopupClick={handlePopupClick}*/}
-      {/*  handleOptionClick={handleOptionClick}*/}
-      {/*  onScroll={stopPropagation}*/}
-      {/*  toggleSidebar={toggleSidebar}*/}
-      {/*/>*/}
       <div className={`main-content ${isSidebarVisible ? 'with-sidebar' : ''}`}>
         <div className={`main-content-header ${!isSidebarVisible ? 'collapsed' : ''}`}>
         </div>
         <div className="main-tool-bar">
           <div className={`main-tool-bar-tools ${!isSidebarVisible ? 'collapsed' : ''}`}>
-            {/*<Button icon="pi pi-bars" onClick={toggleSidebar} className="toggle-sidebar-btn"/>*/}
             <Button icon="pi pi-pen-to-square" className="new-chat-btn" onClick={resetConversation}/>
             <ThemeSwitcher/>
           </div>
           <div className={`main-tool-bar-misc`}>
-            {/*<ThemeSwitcher/>*/}
-            {/*<Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-rounded p-button-icon-only"/>*/}
+            <Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-rounded p-button-icon-only"/>
           </div>
         </div>
         <div className="messages">

@@ -11,11 +11,14 @@ const InputBox = ({ onSend, onUpload }) => {
 
   const handleSendClick = () => {
     const trimmedMessage = message.trim();
-    const messageToSend = trimmedMessage || uploadedFiles.map(file => file.name).join(', ');
+    const fileMessages = uploadedFiles.map(file => file.name);
 
-    if (messageToSend || uploadedFiles.length > 0) {
-      onSend?.(messageToSend);
+    if (fileMessages.length > 0) {
+      onSend?.(fileMessages, trimmedMessage);
       console.log('Files sent to backend:', uploadedFiles);
+      resetInput();
+    } else if (trimmedMessage) {
+      onSend?.([], trimmedMessage);
       resetInput();
     }
   };
@@ -50,10 +53,12 @@ const InputBox = ({ onSend, onUpload }) => {
         <div className="uploaded-files">
           {uploadedFiles.map((file, index) => (
             <div key={index} className="file-item">
-              {file.name}
+              <div className="file-list-file-name">
+                {file.name}
+              </div>
               <Button
                 icon="pi pi-times"
-                className="p-button-text p-button-danger"
+                className="p-button-text p-button-danger file-list-remove-item-btn"
                 onClick={() => handleDeleteFile(index)}
               />
             </div>

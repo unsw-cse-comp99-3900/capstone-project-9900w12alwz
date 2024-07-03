@@ -12,10 +12,12 @@
 }
 
 .file-item {
+    display: flex;
+    align-items: center;
     background-color: var(--surface-b);
     border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px 10px;
+    border-radius: 10px;
+    padding: 5px 0 5px 10px;
     margin-right: 5px;
     margin-bottom: 5px;
     font-size: 0.9em;
@@ -33,10 +35,11 @@
 .message-input {
     flex: 1;
     border: none;
-    border-radius: 25px;
     outline: none;
     resize: none;
     height: 35px;
+    padding-left: 0;
+    padding-right: 0;
     background-color: var(--surface-a);
 }
 
@@ -51,4 +54,8 @@
 .upload-btn .p-button-icon,
 .send-btn .p-button-icon {
     font-size: 1.2em;
+}
+
+.upload-btn .p-button-label {
+    display: none;
 }
