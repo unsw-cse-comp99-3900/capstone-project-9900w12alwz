@@ -8,24 +8,22 @@ import { InputText } from 'primereact/inputtext';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import './Admin.css';
 
+import { get, post, put, del } from '../api';  // 引入API方法
+
 const Admin = () => {
-  const [prompts, setPrompts] = useState([
-    { id: 1, name: 'Item 1', details: 'Details of Item 1' },
-    { id: 2, name: 'Item 2', details: 'Details of Item 2' },
-    { id: 3, name: 'Item 3', details: 'Details of Item 3' },
-
-  ]);
+  const [prompts, setPrompts] = useState([]);
   const [selectedPrompt, setSelectedPrompt] = useState(prompts[0]);
-
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
-
   const overlayPanelRef = useRef(null);
 
   const columns = [
-    { field: 'id', header: 'Id' },
-    { field: 'name', header: 'Name' },
-    { field: 'details', header: 'details' }
+    { field: 'id', header: 'ID' },
+    { field: 'text', header: 'Text' }
   ];
+
+  useEffect(() => {
+    fetchPrompts();
+  }, []);
 
   useEffect(() => {
     if (!selectedPrompt && prompts.length > 0) {
@@ -33,23 +31,35 @@ const Admin = () => {
     }
   }, [prompts, selectedPrompt]);
 
+  const fetchPrompts = async () => {
+    try {
+      const response = await get('/prompts/');
+      setPrompts(response.data);
+    } catch (error) {
+      console.error('Error fetching prompts:', error);
+    }
+  };
+
   const onPromptSelect = (e) => {
     setSelectedPrompt(e.value);
   };
 
-  const onCellEditComplete = (e) => {
+  const onCellEditComplete = async (e) => {
     let { rowData, newValue, field, originalEvent: event } = e;
     if (rowData && newValue.trim().length > 0) {
       rowData[field] = newValue;
-
-      // Update the prompt directly
-      const updatedPrompts = prompts.map((prompt) =>
-        prompt.id === rowData.id ? rowData : prompt
-      );
-
-      // Update the state
-      setPrompts(updatedPrompts);
-      setSelectedPrompt({ ...rowData }); // Ensure re-rendering
+      try {
+        await put(`/prompts/${rowData.id}/`, rowData);
+        // Update the state
+        const updatedPrompts = prompts.map((prompt) =>
+          prompt.id === rowData.id ? rowData : prompt
+        );
+        setPrompts(updatedPrompts);
+        setSelectedPrompt({ ...rowData }); // Ensure re-rendering
+      } catch (error) {
+        console.error('Error updating prompt:', error);
+        event.preventDefault();
+      }
     } else {
       event.preventDefault();
     }
@@ -63,6 +73,29 @@ const Admin = () => {
     return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} onKeyDown={(e) => e.stopPropagation()} />;
   };
 
+  const addNewPrompt = async () => {
+    const newPrompt = { text: `New Prompt Text` };
+    try {
+      const response = await post('/prompts/', newPrompt);
+      const updatedPrompts = [...prompts, response.data];
+      setPrompts(updatedPrompts);
+      setSelectedPrompt(response.data);
+    } catch (error) {
+      console.error('Error creating prompt:', error);
+    }
+  };
+
+  const deletePrompt = async (promptId) => {
+    try {
+      await del(`/prompts/${promptId}/`);
+      const updatedPrompts = prompts.filter(prompt => prompt.id !== promptId);
+      setPrompts(updatedPrompts);
+      setSelectedPrompt(updatedPrompts.length > 0 ? updatedPrompts[0] : null);
+    } catch (error) {
+      console.error('Error deleting prompt:', error);
+    }
+  };
+
   return (
     <div className="admin-container">
       <div className={`sidebar ${isPanelCollapsed ? 'collapsed' : ''}`}>
@@ -73,16 +106,10 @@ const Admin = () => {
             onClick={() => setIsPanelCollapsed(!isPanelCollapsed)}
           />
           {!isPanelCollapsed && (
-            <Button 
-              icon="pi pi-pencil" 
+            <Button
+              icon="pi pi-pencil"
               className="p-button-icon-only"
-              onClick={() => {
-                const newId = prompts.length > 0 ? Math.max(...prompts.map(prompt => prompt.id)) + 1 : 1;
-                const newPrompt = { id: newId, name: `Item ${newId}`, details: `Details of Item ${newId}` };
-                const updatedPrompts = [...prompts, newPrompt];
-                setPrompts(updatedPrompts);
-                setSelectedPrompt(newPrompt);
-              }}
+              onClick={addNewPrompt}
             />
           )}
         </div>
@@ -92,11 +119,11 @@ const Admin = () => {
               value={selectedPrompt}
               options={prompts}
               onChange={onPromptSelect}
-              optionLabel="name"
+              optionLabel="text"
               className="list-box"
               itemTemplate={(option) => (
                 <div className="list-box-item">
-                  <span>{option.name}</span>
+                  <span>{option.id}: {option.text}</span>
                   <Button
                     icon="pi pi-ellipsis-h"
                     className="p-button-rounded p-button-text"
@@ -106,7 +133,12 @@ const Admin = () => {
                   <OverlayPanel ref={overlayPanelRef} dismissable>
                     <div className="button-group">
                       <Button label="Edit" icon="pi pi-pencil" className="p-button-secondary" />
-                      <Button label="Delete" icon="pi pi-trash" className="p-button-danger" />
+                      <Button
+                        label="Delete"
+                        icon="pi pi-trash"
+                        className="p-button-danger"
+                        onClick={() => deletePrompt(option.id)}
+                      />
                     </div>
                   </OverlayPanel>
                 </div>
@@ -119,7 +151,7 @@ const Admin = () => {
         <h1>Details</h1>
         <DataTable value={selectedPrompt ? [selectedPrompt] : []} editMode="cell" tableStyle={{ minWidth: '50rem' }}>
           {columns.map(({ field, header }) => {
-            if (field === 'id') return null;
+            // if (field === 'id') return null;
             return (
               <Column
                 key={field}
@@ -133,11 +165,12 @@ const Admin = () => {
         </DataTable>
         <div className="button-group">
           <Button label="Confirm" icon="pi pi-check" onClick={() => console.log('Modified row data:', selectedPrompt)} />
-          <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={() => {
-            const updatedPrompts = prompts.filter(prompt => prompt.id !== selectedPrompt.id);
-            setPrompts(updatedPrompts);
-            setSelectedPrompt(updatedPrompts.length > 0 ? updatedPrompts[0] : null);
-          }} />
+          <Button
+            label="Delete"
+            icon="pi pi-trash"
+            className="p-button-danger"
+            onClick={() => deletePrompt(selectedPrompt.id)}
+          />
         </div>
       </div>
     </div>
