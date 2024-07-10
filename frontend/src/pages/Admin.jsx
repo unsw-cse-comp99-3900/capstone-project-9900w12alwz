@@ -7,8 +7,9 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import './Admin.css';
+import Sidebar from '../components/Admin/Sidebar';
 
-import { get, post, put, del } from '../api';  // 引入API方法
+import { get, post, put, del } from '../api';
 
 const Admin = () => {
   const [prompts, setPrompts] = useState([]);
@@ -26,7 +27,7 @@ const Admin = () => {
   }, []);
 
   useEffect(() => {
-    if (!selectedPrompt && prompts.length > 0) {
+    if (prompts.length > 0 && (!selectedPrompt || !prompts.some(p => p.id === selectedPrompt.id))) {
       setSelectedPrompt(prompts[0]);
     }
   }, [prompts, selectedPrompt]);
@@ -41,7 +42,9 @@ const Admin = () => {
   };
 
   const onPromptSelect = (e) => {
-    setSelectedPrompt(e.value);
+    if (e.value && (!selectedPrompt || e.value.id !== selectedPrompt.id)) {
+      setSelectedPrompt(e.value);
+    }
   };
 
   const onCellEditComplete = async (e) => {
@@ -98,58 +101,18 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
-      <div className={`sidebar ${isPanelCollapsed ? 'collapsed' : ''}`}>
-        <div className="sidebar-header">
-          <Button
-            icon="pi pi-bars"
-            className="p-button-icon-only"
-            onClick={() => setIsPanelCollapsed(!isPanelCollapsed)}
-          />
-          {!isPanelCollapsed && (
-            <Button
-              icon="pi pi-pencil"
-              className="p-button-icon-only"
-              onClick={addNewPrompt}
-            />
-          )}
-        </div>
-        {!isPanelCollapsed && (
-          <ScrollPanel className="scroll-panel">
-            <ListBox
-              value={selectedPrompt}
-              options={prompts}
-              onChange={onPromptSelect}
-              optionLabel="text"
-              className="list-box"
-              itemTemplate={(option) => (
-                <div className="list-box-item">
-                  <span>{option.id}: {option.text}</span>
-                  <Button
-                    icon="pi pi-ellipsis-h"
-                    className="p-button-rounded p-button-text"
-                    style={{ marginLeft: 'auto' }}
-                    onClick={(e) => overlayPanelRef.current.toggle(e)}
-                  />
-                  <OverlayPanel ref={overlayPanelRef} dismissable>
-                    <div className="button-group">
-                      <Button label="Edit" icon="pi pi-pencil" className="p-button-secondary" />
-                      <Button
-                        label="Delete"
-                        icon="pi pi-trash"
-                        className="p-button-danger"
-                        onClick={() => deletePrompt(option.id)}
-                      />
-                    </div>
-                  </OverlayPanel>
-                </div>
-              )}
-            />
-          </ScrollPanel>
-        )}
-      </div>
+      <Sidebar
+        isPanelCollapsed={isPanelCollapsed}
+        setIsPanelCollapsed={setIsPanelCollapsed}
+        prompts={prompts}
+        selectedPrompt={selectedPrompt}
+        setSelectedPrompt={setSelectedPrompt}
+        addNewPrompt={addNewPrompt}
+        deletePrompt={deletePrompt}
+      />
       <div className="main-content">
-        <h1>Details</h1>
-        <DataTable value={selectedPrompt ? [selectedPrompt] : []} editMode="cell" tableStyle={{ minWidth: '50rem' }}>
+        <h1>Prompt</h1>
+        {/* <DataTable value={selectedPrompt ? [selectedPrompt] : []} editMode="cell" tableStyle={{ minWidth: '50rem' }}>
           {columns.map(({ field, header }) => {
             // if (field === 'id') return null;
             return (
@@ -162,7 +125,36 @@ const Admin = () => {
               />
             );
           })}
-        </DataTable>
+        </DataTable> */}
+        <div className="input-container">
+          <div className="input-group">
+            <label htmlFor="prompt-id">Prompt ID</label>
+            <InputText
+              id="prompt-id"
+              value={selectedPrompt ? selectedPrompt.id : ''}
+              readOnly
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="prompt-text">Prompt Text</label>
+            <textarea
+              id="prompt-text"
+              value={selectedPrompt ? selectedPrompt.text : ''}
+              onChange={(e) => {
+                const updatedPrompt = { ...selectedPrompt, text: e.target.value };
+                setSelectedPrompt(updatedPrompt);
+
+                const updatedPrompts = prompts.map((prompt) =>
+                  prompt.id === updatedPrompt.id ? updatedPrompt : prompt
+                );
+                setPrompts(updatedPrompts);
+              }}
+            />
+            <small id="prompt-help">
+              Edit your prompt description here.
+            </small>
+          </div>
+        </div>
         <div className="button-group">
           <Button label="Confirm" icon="pi pi-check" onClick={() => console.log('Modified row data:', selectedPrompt)} />
           <Button
