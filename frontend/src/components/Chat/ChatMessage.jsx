@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { Parser } from '@json2csv/plainjs';
 import { IconFileTypeSvg, IconFileTypeCsv, IconFileDescription } from '@tabler/icons-react';
+import DOMPurify from 'dompurify';
 import './css/ChatMessage.css';
 import BpmnRender from "./BpmnRender";
 
@@ -108,17 +109,18 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
               </div>
             </div>
             {message.content && (
-              <div className="message-file-block-text-content" style={{marginTop: '10px'}}>
-                {message.content}
-              </div>
+              <div
+                className="message-file-block-text-content"
+                style={{ marginTop: '10px' }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.content.replace(/\n/g, '<br />')) }}
+              />
             )}
           </div>
         );
       default:
+        const sanitizedContent = DOMPurify.sanitize(message.content.replace(/\n/g, '<br />'));
         return (
-          <div className="message">
-            {message.content}
-          </div>
+          <div className="message" dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
         );
     }
   };
