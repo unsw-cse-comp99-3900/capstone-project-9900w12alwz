@@ -49,7 +49,9 @@ class ChatBot:
 
 class Prompt(models.Model):
     text = models.TextField()
+    name = models.TextField(default="test")
+    is_default = models.IntegerField(default=0)  # 添加默认值
 
     def __str__(self):
-        return self.text
+        return self.name
 
