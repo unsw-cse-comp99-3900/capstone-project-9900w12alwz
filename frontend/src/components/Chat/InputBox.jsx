@@ -11,14 +11,35 @@ const InputBox = ({ onSend, onUpload }) => {
 
   const handleSendClick = () => {
     const trimmedMessage = message.trim();
-    const fileMessages = uploadedFiles.map(file => file.name);
+    const messagesToSend = [];
 
-    if (fileMessages.length > 0) {
-      onSend?.(fileMessages, trimmedMessage);
-      console.log('Files sent to backend:', uploadedFiles);
-      resetInput();
+    if (uploadedFiles.length > 0) {
+      uploadedFiles.forEach((file) => {
+        const fileMessage = {
+          content: trimmedMessage, // Text content (optional)
+          file: {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            url: URL.createObjectURL(file), // URL or path to the uploaded file
+          },
+          isUser: true,
+          type: trimmedMessage ? 'fileWithText' : 'file',
+        };
+        messagesToSend.push(fileMessage);
+      });
     } else if (trimmedMessage) {
-      onSend?.([], trimmedMessage);
+      const textMessage = {
+        content: trimmedMessage,
+        isUser: true,
+        type: 'text',
+      };
+      messagesToSend.push(textMessage);
+    }
+
+    if (messagesToSend.length > 0) {
+      onSend?.(messagesToSend);
+      console.log('Messages sent to backend:', messagesToSend);
       resetInput();
     }
   };

@@ -92,24 +92,28 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
           </div>
         );
       case 'file':
-        const extension = getExtension(message.content);
+      case 'fileWithText':
+        const extension = getExtension(message.file.name);
         return (
-          <div className="message" style={{ minWidth: '35%' }}>
+          <div className="message" style={{ minWidth: '30%' }}>
             <div className="message-file-block">
-              <div>
-                <IconFileDescription className="message-file-block-icon" size={35}/>
-              </div>
+              <IconFileDescription className="message-file-block-icon" size={35} />
               <div className="message-file-block-file-info">
                 <div className="message-file-block-filename">
-                  {message.content}
+                  {message.file.name}
                 </div>
                 <div className="message-file-block-file-ext">
                   {extension.toUpperCase()}
                 </div>
               </div>
             </div>
+            {message.content && (
+              <div className="message-file-block-text-content" style={{marginTop: '10px'}}>
+                {message.content}
+              </div>
+            )}
           </div>
-        )
+        );
       default:
         return (
           <div className="message">

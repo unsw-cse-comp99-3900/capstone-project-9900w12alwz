@@ -106,6 +106,28 @@ const Chat = () => {
         content: bpmnSample,
         isUser: false,
         type: 'bpmn'
+      },
+      {
+        content: '',
+        file: {
+          name: 'example.png',
+          size: 12345,
+          type: 'image/png',
+          url: 'path/to/example.png'
+        },
+        isUser: true,
+        type: 'file'
+      },
+      {
+        content: 'Here is a file for you',
+        file: {
+          name: 'example.pdf',
+          size: 23456,
+          type: 'application/pdf',
+          url: 'path/to/example.pdf'
+        },
+        isUser: true,
+        type: 'fileWithText'
       }
     ];
 
@@ -113,38 +135,36 @@ const Chat = () => {
       setMessages(initialMessages);
     }, 1000);
 
-    // Simulate getting the chat list
-    // const initialSidebarItems = [
-    //   { label: 'Item 1', id: 1 },
-    //   { label: 'Item 2', id: 2 },
-    //   { label: 'Item 3', id: 3 }
-    // ];
-    // setTimeout(() => {
-    //   setSidebarItems(initialSidebarItems);
-    // }, 1000);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('chatMessages', JSON.stringify(messages));
   }, [messages]);
 
+  // Auto scroll to bottom
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   const addMessage = (message) => {
     setMessages(prevMessages => [...prevMessages, message]);
   };
 
-  const handleSend = async (fileMessages, textMessage) => {
-    if (fileMessages.length > 0) {
-      fileMessages.forEach(fileMessage => {
-        addMessage({ content: fileMessage, isUser: true, type: 'file' });
-      });
-    }
-    if (textMessage) {
-      addMessage({ content: textMessage, isUser: true, type: 'text' });
-    }
+  const handleSend = async (messagesToSend) => {
+    console.log(messagesToSend);
+
+    messagesToSend.forEach(message => {
+      addMessage(message);
+    });
+
+    const textMessages = messagesToSend.filter(message => message.type === 'text' || message.type === 'fileWithText').map(message => message.content).join(' ');
+
     setIsLoading(true);
 
     try {
-      const response = await post('/chat/', { question: textMessage });
+      const response = await post('/chat/', { question: textMessages });
       const data = response.data;
       if (data && data.answer) {
         addMessage({ content: data.answer, isUser: false });
