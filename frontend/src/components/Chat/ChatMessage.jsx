@@ -3,7 +3,7 @@ import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Tree } from 'primereact/tree';
 import { Parser } from '@json2csv/plainjs';
-import { IconFileTypeSvg, IconFileTypeCsv } from '@tabler/icons-react';
+import { IconFileTypeSvg, IconFileTypeCsv, IconFileDescription } from '@tabler/icons-react';
 import './css/ChatMessage.css';
 import BpmnRender from "./BpmnRender";
 
@@ -50,6 +50,11 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
     }
   };
 
+  const getExtension = (filename) => {
+    const parts = filename.split('.');
+    return parts.length > 1 ? parts.pop() : 'Unknown';
+  };
+
   const renderMessageContent = () => {
     if (isLoading) {
       return <div className="message loading-message"><i className="pi pi-spinner pi-spin"></i></div>;
@@ -58,7 +63,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
       case 'capabilityMap':
         return (
           <div className="message-block" style={{ minWidth: '50%' }}>
-            <div className="message"><Tree value={[message.content]} style={{ fontSize: '1rem' }} />
+            <div className="message"><Tree value={[message.content]} style={{ fontSize: '1rem' }}/>
             </div>
             <div className="message-tool-button-container">
               <Button
@@ -67,7 +72,6 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
               >
                 <IconFileTypeCsv className="message-tool-button-icon" size={20}/>
               </Button>
-
             </div>
           </div>
         );
@@ -88,17 +92,28 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
           </div>
         );
       case 'file':
+        const extension = getExtension(message.content);
         return (
-          <div className="message">
-            <div style={{ minHeight: "50px"}}>
-              File: {message.content}
+          <div className="message" style={{ minWidth: '35%' }}>
+            <div className="message-file-block">
+              <div>
+                <IconFileDescription className="message-file-block-icon" size={35}/>
+              </div>
+              <div className="message-file-block-file-info">
+                <div className="message-file-block-filename">
+                  {message.content}
+                </div>
+                <div className="message-file-block-file-ext">
+                  {extension.toUpperCase()}
+                </div>
+              </div>
             </div>
           </div>
         )
       default:
         return (
           <div className="message">
-          {message.content}
+            {message.content}
           </div>
         );
     }

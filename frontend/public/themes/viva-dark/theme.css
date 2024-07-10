@@ -52,6 +52,10 @@
   --custom-chat-message-bpmn-background-color:#EDEDED;
   --custom-chat-message-bot-tool-btn-color: #f7f7f7;
   --custom-chat-message-bot-tool-btn-background-color:#242424;
+  --custom-chat-message-user-file-block-background-color:#242424;
+  --custom-chat-message-user-file-block-filename-color:#f7f7f7;
+  --custom-chat-message-user-file-block-file-ext-color:#f7f7f7;
+  --custom-chat-message-user-file-block-file-icon-color:#f7f7f7;
   color-scheme: dark;
 }
 

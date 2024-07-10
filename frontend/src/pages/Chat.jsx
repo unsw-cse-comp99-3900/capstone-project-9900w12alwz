@@ -20,6 +20,7 @@ const Chat = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const treeData = {
@@ -159,6 +160,7 @@ const Chat = () => {
     console.log('Upload clicked:', files);
   };
 
+  // Used to calculate and update the window height on the mobile device
   const updateVh = () => {
     const vh = window.innerHeight;
     document.documentElement.style.setProperty('--doc-height', `${vh}px`);
@@ -170,6 +172,7 @@ const Chat = () => {
     return () => window.removeEventListener('resize', updateVh);
   }, []);
 
+  // Sidebar
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
@@ -188,6 +191,7 @@ const Chat = () => {
     e.stopPropagation();
   };
 
+  // Controls showing or hiding the sidebar according to the screen width.
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 600 && isSidebarVisible) {
@@ -201,13 +205,13 @@ const Chat = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarVisible]);
 
+  // Clear the conversation data (only frontend)
   const resetConversation = () => {
     setMessages([]);
     localStorage.removeItem('chatMessages');
   };
 
-  const navigate = useNavigate();
-
+  // Used to navigate to Admin page
   const goToAdmin = () => {
     navigate('/admin');
   };

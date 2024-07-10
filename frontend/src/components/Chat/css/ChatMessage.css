@@ -17,7 +17,6 @@
 
 /* Message bubble styles */
 .message-container.bubble .message {
-    border-radius: 10px;
     padding: 10px;
     max-width: 80%;
     word-wrap: break-word;
@@ -25,12 +24,14 @@
 
 /* User message bubble styles */
 .message-container.user.bubble .message {
+    border-radius: 10px 3px 10px 10px;
     background-color: var(--custom-chat-message-user-background-color);
     color: var(--custom-chat-message-user-text-color);
 }
 
 /* Other message bubble styles */
 .message-container.other.bubble .message {
+    border-radius: 3px 10px 10px 10px;
     background-color: var(--custom-chat-message-bot-background-color);
     color: var(--custom-chat-message-bot-text-color);
     font-size: 1.3rem;
@@ -68,11 +69,11 @@
     }
 }
 
-.message-tool-button-container{
+.message-tool-button-container {
     margin-top: 8px;
 }
 
-.message-tool-button{
+.message-tool-button {
     width: 32px;
     height: 32px;
     background: var(--custom-chat-message-bot-tool-btn-background-color);
@@ -80,8 +81,34 @@
     padding: 0;
 }
 
-.message-tool-button-icon{
+.message-tool-button-icon {
     color: var(--custom-chat-message-bot-tool-btn-color);
+}
+
+.message-file-block {
+    color: black;
+    background-color: var(--custom-chat-message-user-file-block-background-color);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.message-file-block .message-file-block-file-info{
+    margin-left: 10px;
+}
+
+.message-file-block-icon{
+    color: var(--custom-chat-message-user-file-block-file-icon-color)
+}
+
+.message-file-block-filename{
+    color: var(--custom-chat-message-user-file-block-filename-color)
+}
+
+.message-file-block-file-ext{
+    font-size: 12px;
+    color: var(--text-color-secondary)
 }
 
 /* Fade in animation */
