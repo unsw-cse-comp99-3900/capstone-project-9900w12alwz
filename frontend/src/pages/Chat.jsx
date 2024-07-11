@@ -87,16 +87,16 @@ const Chat = () => {
     `
 
     const initialMessages = [
-      {
-        content: 'Generate a capability map',
-        isUser: true,
-        type: 'text'
-      },
-      {
-        content: treeData,
-        isUser: false,
-        type: 'capabilityMap'
-      },
+      // {
+      //   content: 'Generate a capability map',
+      //   isUser: true,
+      //   type: 'text'
+      // },
+      // {
+      //   content: treeData,
+      //   isUser: false,
+      //   type: 'capabilityMap'
+      // },
       {
         content: 'Generate a BPMN',
         isUser: true,
@@ -148,6 +148,28 @@ const Chat = () => {
     }
   }, [messages]);
 
+  // Convert raw data to tree data
+  const convertToTreeData = (obj, parentKey = '', level = 1) => {
+    const result = [];
+    let currentIndex = 1;
+
+    Object.keys(obj).forEach((key) => {
+      const uniqueKey = parentKey ? `${parentKey}.${currentIndex}` : `${currentIndex}`;
+      const labelWithLevel = parentKey ? `${parentKey}.${currentIndex} ${key}` : `${currentIndex} ${key}`;
+      const children = convertToTreeData(obj[key], uniqueKey, level + 1, false);
+      const node = {
+        key: uniqueKey,
+        label: labelWithLevel
+      };
+      if (children.length) {
+        node.children = children;
+      }
+      result.push(node);
+      currentIndex += 1;
+    });
+    return result;
+  };
+
   const addMessage = (message) => {
     setMessages(prevMessages => [...prevMessages, message]);
   };
@@ -165,9 +187,19 @@ const Chat = () => {
 
     try {
       const response = await post('/chat/', { question: textMessages });
-      const data = response.data;
+      const data = response.data.answer;
       if (data && data.answer) {
-        addMessage({ content: data.answer, isUser: false });
+        const { answer, type } = data;
+
+        if (type === 'capabilityMap') {
+          const jsonString = answer.match(/JSON: ({.*?}) \|\|\|\|\|/s)[1];
+          const capabilityMap = JSON.parse(jsonString);
+          const csvString = answer.match(/CSV: (.*)$/s)[1].trim();
+          const treeData = convertToTreeData(capabilityMap['Capability Map'])[0];
+          addMessage({ content: treeData,csv: csvString, isUser: false, type: 'capabilityMap' });
+        } else {
+          addMessage({ content: answer, isUser: false });
+        }
       }
     } catch (error) {
       console.error('Error sending message:', error);
