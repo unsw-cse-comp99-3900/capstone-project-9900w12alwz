@@ -44,3 +44,8 @@
 .admin-item-right {
     margin-left: auto !important;
 }
+
+.admin-list-box-item.default {
+    background-color: #d1e7dd; /* 高亮背景色 */
+    font-weight: bold; /* 加粗字体 */
+  }
