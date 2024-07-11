@@ -27,6 +27,7 @@ class ChatAPIView(APIView):
         # 去掉多余的空格和换行符，并去掉转义符号
         feedback = re.sub(r'\s+', ' ', feedback).strip()
         feedback = feedback.replace('\\"', '"')
+        feedback = re.sub(r'```', '', feedback)
 
         response_data = {
             "answer": feedback,
