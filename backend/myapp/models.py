@@ -33,7 +33,11 @@ class ChatBot:
         return content
 
     def chain(self, question):
-        prompt = ChatPromptTemplate.from_template("The user's request is {question}")
+        prompt_rules = """Based on the user's input, here are some conversational rules to follow:
+        1. If the user's question involves creating a Capability Map and they have not provided the number of levels needed in the Capability Map and the number of capabilities required for each level, please ask the user for these details.
+        The user's request is: {question}"""
+
+        prompt = ChatPromptTemplate.from_template(prompt_rules)
         message = prompt.format(question=question)
         self.chat_history.add_user_message(message)
 
