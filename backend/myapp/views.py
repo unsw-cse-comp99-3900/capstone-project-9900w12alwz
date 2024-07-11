@@ -22,7 +22,12 @@ class ChatAPIView(APIView):
             return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         feedback = self.bot.answer(question)
-        return Response({"answer": feedback}, status=status.HTTP_200_OK)
+        response_data = {
+            "answer": feedback,
+            "type": "capabilityMap" if "||||||" in feedback else "text"
+        }
+
+        return Response({"answer": response_data}, status=status.HTTP_200_OK)
 
 class PromptListCreateAPIView(APIView):
     @swagger_auto_schema(
