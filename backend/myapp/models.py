@@ -33,9 +33,14 @@ class ChatBot:
         return content
 
     def chain(self, question):
-        prompt_rules = """Based on the user's input, here are some conversational rules to follow:
-        1. If the user's question involves creating a Capability Map and they have not provided the number of levels needed in the Capability Map and the number of capabilities required for each level, please ask the user for these details.
-        The user's request is: {question}"""
+        prompt_rules = """
+        Based on the user's input, here are some conversational rules to follow:
+            1. If the user's question involves creating a Capability Map and they have not provided the number of levels needed in the Capability Map and the number of capabilities required for each level, please ask the user for these details.            
+            2. If the user's question involves generating a Capability Map task, please return the corresponding JSON and CSV content in the following format: JSON: jsoncontent |||||| CSV: csvcontent. The response content will be used to build a frontend page, so please adhere strictly to this format.
+    
+            The user's request is: {question}
+            
+        """
 
         prompt = ChatPromptTemplate.from_template(prompt_rules)
         message = prompt.format(question=question)
