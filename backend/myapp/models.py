@@ -22,7 +22,7 @@ class ChatBot:
 
     def initialize_bot(self):
         self.chatmodel = ChatOpenAI(
-            model="gpt-3.5-turbo",
+            model="gpt-4-turbo",
             temperature=0,
             openai_api_key="sk-student-group-1-key-TO4Cg5exvtuWKqfwRK2hT3BlbkFJ5rE7Cy1yjfTQYgN2hDbX"
         )
