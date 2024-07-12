@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
-import 'primereact/resources/themes/viva-dark/theme.css';
+import { useNavigate } from 'react-router-dom';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import './Chat.css';
@@ -8,36 +8,211 @@ import Sidebar from '../components/Chat/Sidebar';
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import ChatMessage from "../components/Chat/ChatMessage";
 import InputBox from "../components/Chat/InputBox";
+import { post } from '../api';
 
 const Chat = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth >= 600);
   const [showBubble, setShowBubble] = useState(true);
-  const [messages, setMessages] = useState([]);
+  const [sidebarItems, setSidebarItems] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    const savedMessages = localStorage.getItem('chatMessages');
+    return savedMessages ? JSON.parse(savedMessages) : [];
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // 模拟后端返回初始消息
+    const treeData = {
+      key: "1.Strategic Capabilities",
+      label: "1.Strategic Capabilities",
+      children: [
+        {
+          key: "1.1 Product Strategy",
+          label: "1.1 Product Strategy",
+          children: [
+            { key: "1.1.1 Market Research", label: "1.1.1 Market Research" },
+            { key: "1.1.2 Competitive Analysis", label: "1.1.2 Competitive Analysis" }
+          ]
+        },
+        {
+          key: "1.2 Business Development",
+          label: "1.2 Business Development",
+          children: [
+            { key: "1.2.1 Partnership Management", label: "1.2.1 Partnership Management" },
+            { key: "1.2.2 Customer Relationship Management", label: "1.2.2 Customer Relationship Management" }
+          ]
+        }
+      ]
+    };
+
+    const bpmnSample = `
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_0jjyxz7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="17.7.1">
+  <bpmn:process id="Process_0xl4bnu" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_15y1osc" />
+    <bpmn:endEvent id="Event_06j7amu" />
+    <bpmn:endEvent id="Event_1hq6ijz" />
+    <bpmn:exclusiveGateway id="Gateway_0u3gh9h" />
+    <bpmn:intermediateThrowEvent id="Event_1kanrdd" />
+    <bpmn:intermediateThrowEvent id="Event_1jp3mgo" />
+    <bpmn:intermediateThrowEvent id="Event_1ysq5jz" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0xl4bnu">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_15y1osc">
+        <dc:Bounds x="192" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06j7amu_di" bpmnElement="Event_06j7amu">
+        <dc:Bounds x="392" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hq6ijz_di" bpmnElement="Event_1hq6ijz">
+        <dc:Bounds x="612" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0u3gh9h_di" bpmnElement="Gateway_0u3gh9h" isMarkerVisible="true">
+        <dc:Bounds x="765" y="85" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1kanrdd_di" bpmnElement="Event_1kanrdd">
+        <dc:Bounds x="952" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1jp3mgo_di" bpmnElement="Event_1jp3mgo">
+        <dc:Bounds x="1142" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ysq5jz_di" bpmnElement="Event_1ysq5jz">
+        <dc:Bounds x="1332" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+    `
+
     const initialMessages = [
-      { text: 'Hello!', isUser: false },
-      { text: 'Hi there!', isUser: true }
+      // {
+      //   content: 'Generate a capability map',
+      //   isUser: true,
+      //   type: 'text'
+      // },
+      // {
+      //   content: treeData,
+      //   isUser: false,
+      //   type: 'capabilityMap'
+      // },
+      {
+        content: 'Generate a BPMN',
+        isUser: true,
+        type: 'text'
+      },
+      {
+        content: bpmnSample,
+        isUser: false,
+        type: 'bpmn'
+      },
+      {
+        content: '',
+        file: {
+          name: 'example.png',
+          size: 12345,
+          type: 'image/png',
+          url: 'path/to/example.png'
+        },
+        isUser: true,
+        type: 'file'
+      },
+      {
+        content: 'Here is a file for you',
+        file: {
+          name: 'example.pdf',
+          size: 23456,
+          type: 'application/pdf',
+          url: 'path/to/example.pdf'
+        },
+        isUser: true,
+        type: 'fileWithText'
+      }
     ];
+
     setTimeout(() => {
       setMessages(initialMessages);
-    }, 1000); // 1秒延时模拟后端请求
+    }, 1000);
+
   }, []);
 
-  const handleSend = (message) => {
-    setMessages(prevMessages => [...prevMessages, { text: message, isUser: true }]);
+  useEffect(() => {
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
+  }, [messages]);
 
-    // 模拟后端返回
-    setTimeout(() => {
-      setMessages(prevMessages => [...prevMessages, { text: `Echo: ${message}`, isUser: false }]);
-    }, 1000); // 1秒延时模拟后端响应
+  // Auto scroll to bottom
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  // Convert raw data to tree data
+  const convertToTreeData = (obj, parentKey = '', level = 1) => {
+    const result = [];
+    let currentIndex = 1;
+
+    Object.keys(obj).forEach((key) => {
+      const uniqueKey = parentKey ? `${parentKey}.${currentIndex}` : `${currentIndex}`;
+      const labelWithLevel = parentKey ? `${parentKey}.${currentIndex} ${key}` : `${currentIndex} ${key}`;
+      const children = convertToTreeData(obj[key], uniqueKey, level + 1, false);
+      const node = {
+        key: uniqueKey,
+        label: labelWithLevel
+      };
+      if (children.length) {
+        node.children = children;
+      }
+      result.push(node);
+      currentIndex += 1;
+    });
+    return result;
   };
 
-  const handleUpload = () => {
-    console.log('Upload clicked');
+  const addMessage = (message) => {
+    setMessages(prevMessages => [...prevMessages, message]);
   };
 
+  const handleSend = async (messagesToSend) => {
+    console.log(messagesToSend);
+
+    messagesToSend.forEach(message => {
+      addMessage(message);
+    });
+
+    const textMessages = messagesToSend.filter(message => message.type === 'text' || message.type === 'fileWithText').map(message => message.content).join(' ');
+
+    setIsLoading(true);
+
+    try {
+      const response = await post('/chat/', { question: textMessages });
+      const data = response.data.answer;
+      if (data && data.answer) {
+        const { answer, type } = data;
+
+        if (type === 'capabilityMap') {
+          const jsonString = answer.match(/JSON: ({.*?}) \|\|\|\|\|/s)[1];
+          const capabilityMap = JSON.parse(jsonString);
+          const csvString = answer.match(/CSV: (.*)$/s)[1].trim();
+          const treeData = convertToTreeData(capabilityMap['Capability Map'])[0];
+          addMessage({ content: treeData,csv: csvString, isUser: false, type: 'capabilityMap' });
+        } else {
+          addMessage({ content: answer, isUser: false });
+        }
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpload = (files) => {
+    console.log('Upload clicked:', files);
+  };
+
+  // Used to calculate and update the window height on the mobile device
   const updateVh = () => {
     const vh = window.innerHeight;
     document.documentElement.style.setProperty('--doc-height', `${vh}px`);
@@ -49,6 +224,7 @@ const Chat = () => {
     return () => window.removeEventListener('resize', updateVh);
   }, []);
 
+  // Sidebar
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
@@ -59,14 +235,15 @@ const Chat = () => {
     menuRef.current.toggle(event);
   };
 
-  const handleOptionClick = () => {
-    console.log('Option clicked');
+  const handleOptionClick = (item) => {
+    setSidebarItems(prevItems => prevItems.filter(i => i.id !== item.id));
   };
 
   const stopPropagation = (e) => {
     e.stopPropagation();
   };
 
+  // Controls showing or hiding the sidebar according to the screen width.
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 600 && isSidebarVisible) {
@@ -80,31 +257,47 @@ const Chat = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isSidebarVisible]);
 
+  // Clear the conversation data (only frontend)
+  const resetConversation = () => {
+    setMessages([]);
+    localStorage.removeItem('chatMessages');
+  };
+
+  // Used to navigate to Admin page
+  const goToAdmin = () => {
+    navigate('/admin');
+  };
+
   return (
     <div className="chat-container">
-      <Sidebar
-        isVisible={isSidebarVisible}
-        handlePopupClick={handlePopupClick}
-        handleOptionClick={handleOptionClick}
-        onScroll={stopPropagation}
-        toggleSidebar={toggleSidebar}
-      />
       <div className={`main-content ${isSidebarVisible ? 'with-sidebar' : ''}`}>
         <div className={`main-content-header ${!isSidebarVisible ? 'collapsed' : ''}`}>
         </div>
         <div className="main-tool-bar">
           <div className={`main-tool-bar-tools ${!isSidebarVisible ? 'collapsed' : ''}`}>
-            <Button icon="pi pi-bars" onClick={toggleSidebar} className="toggle-sidebar-btn"/>
-            <Button icon="pi pi-pen-to-square" className="new-chat-btn"/>
+            <Button icon="pi pi-pen-to-square" className="new-chat-btn" onClick={resetConversation}/>
+            <ThemeSwitcher/>
           </div>
           <div className={`main-tool-bar-misc`}>
-            <ThemeSwitcher/>
+            <Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-rounded p-button-icon-only"/>
           </div>
         </div>
         <div className="messages">
-          {messages.map((msg, index) => (
-            <ChatMessage key={index} message={msg.text} isUser={msg.isUser} showBubble={showBubble}/>
-          ))}
+          {messages.length === 0 ? (
+            <div className="greeting-container">
+              <i className={`pi pi-comments greeting-icon`}/>
+              <h2>Welcome to the EA Assist</h2>
+              <p>Start by typing your message in the input box below.</p>
+            </div>
+          ) : (
+            messages.map((msg, index) => (
+              <ChatMessage key={index} message={msg} isUser={msg.isUser} showBubble={showBubble}/>
+            ))
+          )}
+          {isLoading && (
+            <ChatMessage key="loading" message="Loading..." isUser={false} isLoading={true} showBubble={showBubble}/>
+          )}
+          <div ref={messagesEndRef}/>
         </div>
         <div className="input-box-container">
           <InputBox onSend={handleSend} onUpload={handleUpload}/>

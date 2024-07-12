@@ -1,0 +1,46 @@
+.sidebar {
+    width: 250px;
+    background: #f4f4f4;
+    padding: 1em;
+    transition: width 0.3s ease-in-out;
+    height: 100vh; /* 确保 Sidebar 高度为视口高度 */
+    overflow: hidden; /* 禁止 Sidebar 外部滚动 */
+}
+
+.sidebar.collapsed {
+    width: 50px;
+    padding: 1em 0.5em;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1em;
+}
+
+.scroll-panel {
+    height: calc(100vh - 4em);
+    overflow-y: auto;
+}
+
+.list-box {
+    width: 100%; /* 或者设置一个合适的宽度值，例如 80% */
+}
+
+.admin-list-box-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em 0;
+    width: 100%; /* 确保父元素的宽度 */
+}
+
+.admin-item-left {
+    flex: 1;
+    text-align: left;
+}
+
+.admin-item-right {
+    margin-left: auto !important;
+}

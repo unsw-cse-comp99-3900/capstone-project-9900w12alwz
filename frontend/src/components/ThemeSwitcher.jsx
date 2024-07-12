@@ -15,14 +15,14 @@ const ThemeSwitcher = () => {
   }, []);
 
   const applyDarkTheme = () => {
-    document.getElementById('theme-link').href = '/themes/lara-dark-blue/theme.css';
+    document.getElementById('theme-link').href = '/themes/viva-dark/theme.css';
     localStorage.setItem('theme', 'dark');
     setIsDarkTheme(true);
     buttonRef.current.blur(); // Remove focus
   };
 
   const applyLightTheme = () => {
-    document.getElementById('theme-link').href = '/themes/lara-light-blue/theme.css';
+    document.getElementById('theme-link').href = '/themes/viva-light/theme.css';
     localStorage.setItem('theme', 'light');
     setIsDarkTheme(false);
     buttonRef.current.blur(); // Remove focus
