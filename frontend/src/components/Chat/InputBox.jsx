@@ -4,7 +4,7 @@ import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import './css/InputBox.css';
 
-const InputBox = ({ onSend, onUpload }) => {
+const InputBox = ({ onSend }) => {
   const [message, setMessage] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const fileUploadRef = useRef(null);
@@ -21,7 +21,6 @@ const InputBox = ({ onSend, onUpload }) => {
             name: file.name,
             size: file.size,
             type: file.type,
-            url: URL.createObjectURL(file), // URL or path to the uploaded file
           },
           isUser: true,
           type: trimmedMessage ? 'fileWithText' : 'file',
@@ -38,8 +37,7 @@ const InputBox = ({ onSend, onUpload }) => {
     }
 
     if (messagesToSend.length > 0) {
-      onSend?.(messagesToSend);
-      console.log('Messages sent to backend:', messagesToSend);
+      onSend?.(messagesToSend, uploadedFiles);
       resetInput();
     }
   };
@@ -53,7 +51,6 @@ const InputBox = ({ onSend, onUpload }) => {
   const handleUpload = (e) => {
     const files = e.files;
     setUploadedFiles(files);
-    onUpload?.(files);
     fileUploadRef.current.clear();
   };
 
