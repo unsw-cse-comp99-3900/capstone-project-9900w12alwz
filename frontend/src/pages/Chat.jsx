@@ -190,8 +190,6 @@ const Chat = () => {
       formData.append(`image`, file);
     });
 
-    console.log(formData);
-
     setIsLoading(true);
 
     try {
@@ -219,10 +217,6 @@ const Chat = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleUpload = (files) => {
-    console.log('Upload clicked:', files);
   };
 
   // Used to calculate and update the window height on the mobile device
@@ -313,7 +307,7 @@ const Chat = () => {
           <div ref={messagesEndRef}/>
         </div>
         <div className="input-box-container">
-          <InputBox onSend={handleSend} onUpload={handleUpload}/>
+          <InputBox onSend={handleSend}/>
         </div>
       </div>
     </div>
