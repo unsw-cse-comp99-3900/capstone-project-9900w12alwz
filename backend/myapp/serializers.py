@@ -1,9 +1,6 @@
 from rest_framework import serializers
-from .models import Item
 from drf_yasg import openapi
 from .models import Prompt
-
-
 
 # 定义 Swagger 文档中的请求体和响应体
 question_schema = openapi.Schema(
@@ -24,11 +21,6 @@ response_schema = openapi.Response(
         }
     }
 )
-
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = '__all__'
 
 class PromptSerializer(serializers.ModelSerializer):
     class Meta:

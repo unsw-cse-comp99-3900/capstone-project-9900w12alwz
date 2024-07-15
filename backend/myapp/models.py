@@ -1,24 +1,9 @@
 from django.db import models
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.memory import ChatMessageHistory
-from langchain.output_parsers import XMLOutputParser
-
-from PIL import Image
-import io
 import base64
-from langchain import LLMChain
-import os
-
-
-class Item(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-
-    def __str__(self):
-        return self.name
-
+import requests
 
 class ChatBot:
     _instance = None
@@ -41,26 +26,8 @@ class ChatBot:
         content = self.chain(question)
         return content
 
-    def encode_image(self, image_path):
-        with open(image_path, "rb") as image_file:
-            return base64.b64encode(image_file.read()).decode("utf-8")
-
-    # get prompts from prompts database
-    def get_prompts_from_db(self):
-        return [
-            """
-           If the user's question involves creating a Capability Map and they have not provided the number
-         of levels needed in the Capability Map and the number of capabilities 
-         required for each level, please ask the user for these details.""",
-            """
-            If the user's question involves generating a Capability Map task, 
-            please return the corresponding JSON and CSV content in the following format:
-             JSON: jsoncontent |||||| CSV: csvcontent. The response content will be used to build a frontend page
-             , so please adhere strictly to this format
-            """]
-
     # def chain(self, question, image_path="logical_dataflow.png"):
-    def chain(self, question, image_path="logical_dataflow.png"):
+    def chain(self, question, image=None):
         llm = self.chatmodel
         systemMsgs = []
         defaultPrompt = """
@@ -72,7 +39,7 @@ class ChatBot:
         systemMsgDefault = {"type": "text", "text": f"{defaultPrompt}"}
         systemMsgs.append(systemMsgDefault)
 
-        if not image_path:
+        if image is None:
             # prompt from rules
             prompt_rules = f"""
                     Based on the user's input, here are some conversational rules to follow:
@@ -85,14 +52,18 @@ class ChatBot:
             systemMsgs.append({"type": "text", "text": f"{prompt_rules}"})
 
             # prompt from db
-            # prompts schema design : prompt type(default/system/admin) content
-            prompts = self.get_prompts_from_db()
-            for prompt in prompts:
-                prompt_ = f"""
-                Based on the user's input, here are some conversational rules to follow:
-                    If the user's question involves {prompt} follow the corresponding instruction.            
-                """
-                systemMsgs.append({"type": "text", "text": f"{prompt_}"})
+            url = "http://localhost:8000/api/prompts/default/"
+            headers = {
+                'accept': 'application/json',
+                'X-CSRFToken': 'U8tJVz5Wl4s2Mtz3OjNd9cwhl2TqNYnKeZrdeAsvYWKicxfhaN8UGEJsxsELYorJ'
+            }
+            response = requests.get(url, headers=headers).json()
+            prompt_content = response.get('text', '')
+            prompt_ = f"""
+            Based on the user's input, here are some conversational rules to follow:
+                If the user's question involves {prompt_content} follow the corresponding instruction.            
+            """
+            systemMsgs.append({"type": "text", "text": f"{prompt_}"})
 
             systemMsg = SystemMessage(content=systemMsgs)
 
@@ -103,10 +74,8 @@ class ChatBot:
             )
 
         else:
-            current_dir = os.path.dirname(__file__)
-            print("current_dir is {}".format(current_dir))
-            image_path = current_dir + "/" + image_path
-            base64_image = self.encode_image(image_path)
+            # 将图像文件转换为 Base64 编码
+            base64_image = base64.b64encode(image.read()).decode('utf-8')
 
             # message = [
             #     {"role": "system",

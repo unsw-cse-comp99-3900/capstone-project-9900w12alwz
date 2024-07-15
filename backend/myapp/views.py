@@ -19,9 +19,13 @@ class ChatAPIView(APIView):
     def post(self, request, *args, **kwargs):
         """处理 POST 请求，返回聊天机器人的回答"""
         question = request.data.get('question')
+        upload_image = request.FILES['image']
         if not question:
             return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if upload_image is not None:
+            return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST, image=upload_image)
 
+        print(question)
         feedback = self.bot.answer(question)
 
         # 去掉多余的空格和换行符，并去掉转义符号
@@ -33,6 +37,7 @@ class ChatAPIView(APIView):
             "answer": feedback,
             "type": "capabilityMap" if "||||||" in feedback else "text"
         }
+        print(response_data)
 
         return Response({"answer": response_data}, status=status.HTTP_200_OK)
 
@@ -121,5 +126,22 @@ class PromptDetailAPIView(APIView):
             return Response(status=status.HTTP_200_OK)
         except Prompt.DoesNotExist:
             return Response({"error": "Prompt not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DefaultPromptAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id="get_default_prompt",
+        operation_summary="Retrieve the default prompt",
+        operation_description="Retrieve the prompt marked as is_default=1.",
+        responses={200: PromptSerializer, 500: "Internal Server Error"}
+    )
+    def get(self, request, *args, **kwargs):
+        try:
+            prompt = Prompt.objects.get(is_default=True)
+            serializer = PromptSerializer(prompt)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Prompt.DoesNotExist:
+            return Response({"error": "Default prompt not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
