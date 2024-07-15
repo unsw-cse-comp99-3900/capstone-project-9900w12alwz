@@ -76,18 +76,28 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
             </div>
           </div>
         );
-      case 'bpmn':
+      case 'bpmnWithPreText':
         return (
           <div className="message-block" style={{ width: '100%' }}>
             <div className="message" style={{ width: '100%' }}>
-              <BpmnRender ref={bpmnRenderRef} bpmnXML={message.content}/>
+              <div
+                className="message-bpmn-text-pre-content"
+                style={{ marginBottom: '10px' }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.preContent.replace(/\n/g, '<br />')) }}
+              />
+              <BpmnRender ref={bpmnRenderRef} bpmnXML={message.bpmn}/>
+              <div
+                className="message-bpmn-text-tail-content"
+                style={{ marginTop: '10px' }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.tailContent.replace(/\n/g, '<br />')) }}
+              />
             </div>
             <div className="message-tool-button-container">
               <Button
                 className="p-button-rounded p-button-icon-only message-tool-button"
                 onClick={handleDownloadSvg}
               >
-                <IconFileTypeSvg className="message-tool-button-icon" size={20}/>
+              <IconFileTypeSvg className="message-tool-button-icon" size={20}/>
               </Button>
             </div>
           </div>
@@ -98,7 +108,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
         return (
           <div className="message" style={{ minWidth: '30%' }}>
             <div className="message-file-block">
-              <IconFileDescription className="message-file-block-icon" size={35} />
+              <IconFileDescription className="message-file-block-icon" size={35}/>
               <div className="message-file-block-file-info">
                 <div className="message-file-block-filename">
                   {message.file.name}
@@ -120,7 +130,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
       default:
         const sanitizedContent = DOMPurify.sanitize(message.content.replace(/\n/g, '<br />'));
         return (
-          <div className="message" dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+          <div className="message" dangerouslySetInnerHTML={{ __html: sanitizedContent }}/>
         );
     }
   };
