@@ -74,7 +74,7 @@ const InputBox = ({ onSend, onUpload }) => {
         <div className="uploaded-files">
           {uploadedFiles.map((file, index) => (
             <div key={index} className="file-item">
-              <div className="file-list-file-name">
+              <div className="file-list-file-name" title={file.name}>
                 {file.name}
               </div>
               <Button
