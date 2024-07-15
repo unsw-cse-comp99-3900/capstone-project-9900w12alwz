@@ -174,19 +174,32 @@ const Chat = () => {
     setMessages(prevMessages => [...prevMessages, message]);
   };
 
-  const handleSend = async (messagesToSend) => {
-    console.log(messagesToSend);
-
+  const handleSend = async (messagesToSend, uploadedFiles) => {
     messagesToSend.forEach(message => {
       addMessage(message);
     });
 
-    const textMessages = messagesToSend.filter(message => message.type === 'text' || message.type === 'fileWithText').map(message => message.content).join(' ');
+    const textMessages = messagesToSend
+      .filter(message => message.type === 'text' || message.type === 'fileWithText')
+      .map(message => message.content)
+      .join(' ');
+
+    const formData = new FormData();
+    formData.append('question', textMessages);
+    uploadedFiles.forEach((file, index) => {
+      formData.append(`image`, file);
+    });
+
+    console.log(formData);
 
     setIsLoading(true);
 
     try {
-      const response = await post('/chat/', { question: textMessages });
+      const response = await post('/chat/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       const data = response.data.answer;
       if (data && data.answer) {
         const { answer, type } = data;
@@ -196,7 +209,7 @@ const Chat = () => {
           const capabilityMap = JSON.parse(jsonString);
           const csvString = answer.match(/CSV: (.*)$/s)[1].trim();
           const treeData = convertToTreeData(capabilityMap['Capability Map'])[0];
-          addMessage({ content: treeData,csv: csvString, isUser: false, type: 'capabilityMap' });
+          addMessage({ content: treeData, csv: csvString, isUser: false, type: 'capabilityMap' });
         } else {
           addMessage({ content: answer, isUser: false });
         }
