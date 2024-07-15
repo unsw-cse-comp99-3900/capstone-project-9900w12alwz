@@ -25,15 +25,11 @@ class ChatAPIView(APIView):
 
         print(question)
         feedback = self.bot.answer(question,upload_image)
-
-        # 去掉多余的空格和换行符，并去掉转义符号
-        feedback = re.sub(r'\s+', ' ', feedback).strip()
-        feedback = feedback.replace('\\"', '"')
-        feedback = re.sub(r'```', '', feedback)
+        type = "capabilityMap" if "||||||" in feedback else "image" if "```xml" in feedback else "text"
 
         response_data = {
             "answer": feedback,
-            "type": "capabilityMap" if "||||||" in feedback else "text"
+            "type": type
         }
         print(response_data)
 
