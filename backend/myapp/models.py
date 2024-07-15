@@ -22,8 +22,8 @@ class ChatBot:
         )
         self.chat_history = ChatMessageHistory()
 
-    def answer(self, question):
-        content = self.chain(question)
+    def answer(self, question, image=None):
+        content = self.chain(question, image)
         return content
 
     # def chain(self, question, image_path="logical_dataflow.png"):

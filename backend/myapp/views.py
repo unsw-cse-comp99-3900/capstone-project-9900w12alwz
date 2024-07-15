@@ -19,14 +19,12 @@ class ChatAPIView(APIView):
     def post(self, request, *args, **kwargs):
         """处理 POST 请求，返回聊天机器人的回答"""
         question = request.data.get('question')
-        upload_image = request.FILES['image']
+        upload_image = request.FILES.get('image')
         if not question:
             return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
-        if upload_image is not None:
-            return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST, image=upload_image)
 
         print(question)
-        feedback = self.bot.answer(question)
+        feedback = self.bot.answer(question,upload_image)
 
         # 去掉多余的空格和换行符，并去掉转义符号
         feedback = re.sub(r'\s+', ' ', feedback).strip()
