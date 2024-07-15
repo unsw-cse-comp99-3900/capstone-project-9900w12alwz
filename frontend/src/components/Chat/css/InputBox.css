@@ -14,13 +14,26 @@
 .file-item {
     display: flex;
     align-items: center;
-    background-color: var(--surface-b);
-    border: 1px solid #ccc;
+    background-color: var(--custom-chat-inputbox-upload-file-list-background-color);
+    border: 1px solid var(--custom-chat-inputbox-upload-file-list-border-color);
     border-radius: 10px;
     padding: 5px 0 5px 10px;
     margin-right: 5px;
     margin-bottom: 5px;
     font-size: 0.9em;
+    max-width: 100%; /* Ensure the file item doesn't exceed container width */
+}
+
+.file-list-file-name {
+    max-width: 150px; /* Adjust max-width as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px; /* Add space between text and delete button */
+}
+
+.file-list-remove-item-btn {
+    flex-shrink: 0; /* Prevent the button from shrinking */
 }
 
 .input-box {

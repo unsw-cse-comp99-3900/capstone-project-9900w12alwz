@@ -56,6 +56,8 @@
   --custom-chat-message-user-file-block-filename-color:#171717;
   --custom-chat-message-user-file-block-file-ext-color:#171717;
   --custom-chat-message-user-file-block-file-icon-color:#171717;
+  --custom-chat-inputbox-upload-file-list-background-color:#f7f7f7;
+  --custom-chat-inputbox-upload-file-list-border-color: #e0e0e0;
   color-scheme: light;
 }
 
