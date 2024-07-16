@@ -63,9 +63,10 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
     }
     switch (message.type) {
       case 'capabilityMap':
+        console.log(message)
         return (
           <div className="message-block" style={{ minWidth: '50%' }}>
-            <div className="message"><Tree value={[message.content]} style={{ fontSize: '1rem' }}/>
+            <div className="message"><Tree value={[message.content][0]} style={{ fontSize: '1rem' }}/>
             </div>
             <div className="message-tool-button-container">
               <Button
