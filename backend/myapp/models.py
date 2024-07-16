@@ -103,8 +103,108 @@ class ChatBot:
                         xml content
                         ```
                         
-                        For example:
-xml <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1"> <bpmn:process id="process_1" isExecutable="true"> <bpmn:startEvent id="StartEvent_1" name="Start"/> <bpmn:task id="Task_1" name="Task 1"/> <bpmn:task id="Task_2" name="Task 2"/> <bpmn:endEvent id="EndEvent_1" name="End"/> <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_1"/> <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_1" targetRef="Task_2"/> <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_2" targetRef="EndEvent_1"/> </bpmn:process> <bpmndi:BPMNDiagram id="BPMNDiagram_1"> <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_1"> <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1"> <dc:Bounds x="150" y="100" width="36" height="36"/> </bpmndi:BPMNShape> <bpmndi:BPMNShape id="Task_1_di" bpmnElement="Task_1"> <dc:Bounds x="250" y="100" width="80" height="100"/> </bpmndi:BPMNShape> <bpmndi:BPMNShape id="Task_2_di" bpmnElement="Task_2"> <dc:Bounds x="400" y="100" width="80" height="100"/> </bpmndi:BPMNShape> <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1"> <dc:Bounds x="550" y="100" width="36" height="36"/> </bpmndi:BPMNShape> <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1"> <di:waypoint x="186" y="118"/> <di:waypoint x="250" y="150"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2"> <di:waypoint x="330" y="150"/> <di:waypoint x="400" y="150"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3"> <di:waypoint x="480" y="150"/> <di:waypoint x="550" y="150"/> </bpmndi:BPMNEdge> </bpmndi:BPMNPlane> </bpmndi:BPMNDiagram> </bpmn:definitions>
+ For example:
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  id="Definitions_1">
+    <bpmn:process id="CarRentalProcess" isExecutable="true">
+        <bpmn:startEvent id="StartEvent_1" name="Car rental customer starts request">
+            <bpmn:outgoing>Flow_1</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:task id="Task_1" name="Create order for vendor">
+            <bpmn:incoming>Flow_1</bpmn:incoming>
+            <bpmn:outgoing>Flow_2</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_2" name="Check car inventory">
+            <bpmn:incoming>Flow_2</bpmn:incoming>
+            <bpmn:outgoing>Flow_3</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_3" name="Notify customer of availability">
+            <bpmn:incoming>Flow_3</bpmn:incoming>
+            <bpmn:outgoing>Flow_4</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_4" name="Make reservation">
+            <bpmn:incoming>Flow_4</bpmn:incoming>
+            <bpmn:outgoing>Flow_5</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_4_1" name="Process customer reservation and payment information">
+            <bpmn:incoming>Flow_5</bpmn:incoming>
+            <bpmn:outgoing>Flow_6</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_4_2" name="Confirm rental and payment information">
+            <bpmn:incoming>Flow_6</bpmn:incoming>
+            <bpmn:outgoing>Flow_7</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:endEvent id="EndEvent_1" name="Reservation confirmed">
+            <bpmn:incoming>Flow_7</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_1"/>
+        <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_1" targetRef="Task_2"/>
+        <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_2" targetRef="Task_3"/>
+        <bpmn:sequenceFlow id="Flow_4" sourceRef="Task_3" targetRef="Task_4"/>
+        <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_4" targetRef="Task_4_1"/>
+        <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_4_1" targetRef="Task_4_2"/>
+        <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_4_2" targetRef="EndEvent_1"/>
+    </bpmn:process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+        <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CarRentalProcess">
+            <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+                <dc:Bounds x="100" y="100" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Task_1_di" bpmnElement="Task_1">
+                <dc:Bounds x="200" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Task_2_di" bpmnElement="Task_2">
+                <dc:Bounds x="350" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Task_3_di" bpmnElement="Task_3">
+                <dc:Bounds x="500" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Task_4_di" bpmnElement="Task_4">
+                <dc:Bounds x="650" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Task_4_1_di" bpmnElement="Task_4_1">
+                <dc:Bounds x="800" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Task_4_2_di" bpmnElement="Task_4_2">
+                <dc:Bounds x="950" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+                <dc:Bounds x="1100" y="100" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+                <di:waypoint x="136" y="118"/>
+                <di:waypoint x="200" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+                <di:waypoint x="300" y="140"/>
+                <di:waypoint x="350" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+                <di:waypoint x="450" y="140"/>
+                <di:waypoint x="500" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4">
+                <di:waypoint x="600" y="140"/>
+                <di:waypoint x="650" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+                <di:waypoint x="750" y="140"/>
+                <di:waypoint x="800" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+                <di:waypoint x="900" y="140"/>
+                <di:waypoint x="950" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+                <di:waypoint x="1050" y="140"/>
+                <di:waypoint x="1100" y="140"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</bpmn:definitions>
 
 This example includes both <bpmndi:BPMNShape> and <bpmndi:BPMNEdge> elements with precise coordinates and dimensions to ensure proper graphical representation.
                     """}
