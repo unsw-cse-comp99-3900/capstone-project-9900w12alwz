@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
@@ -64,6 +64,27 @@ const InputBox = ({ onSend }) => {
   const handleDeleteFile = (index) => {
     setUploadedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
+
+  const handlePaste = (e) => {
+    const items = e.clipboardData.items;
+    const files = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file') {
+        const file = items[i].getAsFile();
+        files.push(file);
+      }
+    }
+    if (files.length > 0) {
+      setUploadedFiles(prevFiles => [...prevFiles, ...files]);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('paste', handlePaste);
+    return () => {
+      window.removeEventListener('paste', handlePaste);
+    };
+  }, []);
 
   return (
     <div className="input-box-container">
