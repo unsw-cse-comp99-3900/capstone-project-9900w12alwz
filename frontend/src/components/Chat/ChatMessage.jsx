@@ -59,13 +59,13 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
 
   const renderMessageContent = () => {
     if (isLoading) {
-      return <LoadingMessage />;
+      return <div className="loading-message-outer"><LoadingMessage/></div>;
     }
     switch (message.type) {
       case 'capabilityMap':
         console.log(message)
         return (
-          <div className="message-block" style={{ minWidth: '50%' }}>
+          <div className="message-block" style={{ minWidth: '80%' }}>
             <div className="message"><Tree value={[message.content][0]} style={{ fontSize: '1rem' }}/>
             </div>
             <div className="message-tool-button-container">

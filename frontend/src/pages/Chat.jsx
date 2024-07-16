@@ -110,19 +110,28 @@ const Chat = () => {
   // Convert raw data to tree data
   const convertToTreeData = (obj, parentKey = '', level = 1) => {
     const result = [];
-    let currentIndex = 1;
 
-    Object.keys(obj).forEach((key) => {
-      const uniqueKey = parentKey ? `${parentKey}.${currentIndex}` : `${currentIndex}`;
-      const labelWithLevel = parentKey ? `${parentKey}.${currentIndex} ${key}` : `${currentIndex} ${key}`;
-      const children = convertToTreeData(obj[key], uniqueKey, level + 1);
+    Object.keys(obj).forEach((key, index) => {
+      const uniqueKey = parentKey ? `${parentKey}.${index}` : `${index}`;
+      const label = `${key}`;
+
+      let children = [];
+      if (Array.isArray(obj[key])) {
+        children = obj[key].map((item, i) => ({
+          key: `${uniqueKey}.${i}`,
+          label: item,
+          children: null
+        }));
+      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+        children = convertToTreeData(obj[key], uniqueKey, level + 1);
+      }
+
       const node = {
         key: uniqueKey,
-        label: labelWithLevel,
+        label: label,
         children: children.length ? children : null
       };
       result.push(node);
-      currentIndex += 1;
     });
 
     return result;
