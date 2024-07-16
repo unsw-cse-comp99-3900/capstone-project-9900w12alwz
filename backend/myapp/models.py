@@ -63,8 +63,13 @@ class ChatBot:
                 'accept': 'application/json',
                 'X-CSRFToken': 'U8tJVz5Wl4s2Mtz3OjNd9cwhl2TqNYnKeZrdeAsvYWKicxfhaN8UGEJsxsELYorJ'
             }
-            response = requests.get(url, headers=headers).json()
-            prompt_content = response.get('text', '')
+            # 发送GET请求并获取响应
+            response = requests.get(url, headers=headers)
+            # 将响应转换为JSON格式
+            prompt_content = response.json()
+            # 提取text字段的内容
+            prompt_content = prompt_content.get('text', '')
+            print(prompt_content)
             prompt_ = f"""
             Based on the user's input, here are some conversational rules to follow:
                 If the user's question involves {prompt_content} follow the corresponding instruction.            
