@@ -45,8 +45,13 @@ class ChatBot:
             prompt_rules = f"""
                     Based on the user's input, here are some conversational rules to follow:
                         1. If the user's question involves creating a Capability Map but does not provide details on the number of levels needed or the number of capabilities required for each level, politely inquire about these specifics to ensure comprehensive support. Always prioritize the user's immediate questions and needs. Use follow-up questions judiciously to enhance clarity and avoid overwhelming the user with requests for information.
-                        2. If the user's question involves generating a Capability Map task, please return the corresponding JSON and CSV content in the following format: JSON: jsoncontent |||||| CSV: csvcontent. The response content will be used to build a frontend page, so please adhere strictly to this format.
-
+                        2. If the user's question involves generating a Capability Map task, please return only the corresponding JSON and CSV content in the following format: 
+                            ```JSON
+                                jsoncontent
+                            ```, 
+                            ```CSV 
+                                csvcontent
+                            ```.
                         The user's request is: {question}
                     """
             # system prompt
