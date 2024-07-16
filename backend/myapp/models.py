@@ -90,11 +90,14 @@ class ChatBot:
                 content=[
                     {"type": "text",
                      "text": """
-                     you are a bot to convert the different diagrams to a detailed bpmn 2.0 xml format
+                     you are a bot to convert the different diagrams to a bpmn 2.0 xml format
                      by giving users image by following instructions
 
                      1. Create a BPMN 2.0 XML format that includes graphical information for all process elements and make sure do not omit any parts.
                      2. emphasizing that the output must include layout and positional details for each element.
+                     the graphical information (positions and sizes of elements) must be included in this snippet for brevity. 
+                     In a complete implementation, you would include `<bpmndi:BPMNShape>` and `<bpmndi:BPMNEdge>` elements 
+                     to define the visual representation of the process
                      3. Each connection between the elements should be detailed, showing how each element interacts within the process.
                      4. Ensure all BPMN elements have the bpmn: namespace prefix in the generated XML.
                      5. When presenting XML content, format it using triple backticks and label it as XML like this
