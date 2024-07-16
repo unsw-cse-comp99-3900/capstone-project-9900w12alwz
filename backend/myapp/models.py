@@ -95,9 +95,9 @@ class ChatBot:
             systemMsg = SystemMessage(
                 content=[
                     {"type": "text",
-                     "text": "You are a bot that is good at converting different type of diagrams to BPMN XML format"},
+                     "text": "You are a bot that is good at converting different type of diagrams to BPMN 2.0 XML format"},
                     {"type": "text",
-                     "text": "output the BPMN XML format"},
+                     "text": "output the BPMN 2.0 XML format,Ensure that all BPMN elements have the bpmn: namespace prefix in the generated XML."},
                     {"type": "text",
                      "text": """If the output content includes XML, 
                      format it using triple backticks and label it as XML like this:
