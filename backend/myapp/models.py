@@ -68,13 +68,13 @@ class ChatBot:
             # 将响应转换为JSON格式
             prompt_content = response.json()
             # 提取text字段的内容
-            prompt_content = prompt_content.get('text', '')
-            print(prompt_content)
-            prompt_ = f"""
-            Based on the user's input, here are some conversational rules to follow:
-                If the user's question involves {prompt_content} follow the corresponding instruction.            
-            """
-            systemMsgs.append({"type": "text", "text": f"{prompt_}"})
+            user_prompt = prompt_content.get('text', '')
+            # prompt_ = f"""
+            # Based on the user's input, here are some conversational rules to follow:
+            #     If the user's question involves {prompt_content} follow the corresponding instruction.
+            # """
+            print(user_prompt)
+            systemMsgs.append({"type": "text", "text": f"{user_prompt}"})
 
             systemMsg = SystemMessage(content=systemMsgs)
 
