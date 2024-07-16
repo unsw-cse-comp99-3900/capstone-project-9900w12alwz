@@ -45,6 +45,8 @@
   --maskbg: rgba(0, 0, 0, 0.4);
   --highlight-bg: rgba(158, 173, 230, 0.16);
   --highlight-text-color: #9eade6;
+  --custom-chat-message-bot-avatar-background-color: #242424;
+  --custom-chat-message-bot-avatar-border-color: #404040;
   --custom-chat-message-bot-text-color: white;
   --custom-chat-message-bot-background-color:#242424;
   --custom-chat-message-user-text-color: white;
@@ -58,6 +60,8 @@
   --custom-chat-message-user-file-block-file-icon-color:#f7f7f7;
   --custom-chat-inputbox-upload-file-list-background-color:#242424;
   --custom-chat-inputbox-upload-file-list-border-color: #404040;
+  --custom-chat-inputbox-background-color: #242424;
+  --custom-chat-inputbox-border-color: #404040;
   color-scheme: dark;
 }
 

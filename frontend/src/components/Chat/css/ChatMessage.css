@@ -44,11 +44,18 @@
 }
 
 /* Avatar styling for messages */
-.message-avatar {
+.message-avatar-container {
     width: 35px;
     height: 35px;
     margin-right: 10px;
     flex-shrink: 0;
+}
+
+.message-avatar{
+    background-color: var(--custom-chat-message-bot-avatar-background-color);
+    border: solid 1px var(--custom-chat-message-bot-avatar-border-color);
+    width: 35px;
+    height: 35px;
 }
 
 /* Container for all messages */

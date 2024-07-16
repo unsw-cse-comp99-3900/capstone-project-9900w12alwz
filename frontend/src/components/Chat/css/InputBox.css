@@ -39,10 +39,10 @@
 .input-box {
     display: flex;
     align-items: center;
-    border: 1px solid #ccc;
+    border: 1px solid var(--custom-chat-inputbox-border-color);
     border-radius: 25px;
     padding: 5px 5px;
-    background-color: var(--surface-a);
+    background-color: var(--custom-chat-inputbox-background-color);
 }
 
 .message-input {
@@ -53,7 +53,7 @@
     height: 35px;
     padding-left: 0;
     padding-right: 0;
-    background-color: var(--surface-a);
+    background-color: var(--custom-chat-inputbox-background-color);
 }
 
 .upload-btn,
