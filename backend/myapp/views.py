@@ -25,7 +25,7 @@ class ChatAPIView(APIView):
 
         print(question)
         feedback = self.bot.answer(question,upload_image)
-        type = "capabilityMap" if "||||||" in feedback else "image" if "```xml" in feedback else "text"
+        type = "capabilityMap" if "```JSON" in feedback else "image" if "```xml" in feedback else "text"
 
         response_data = {
             "answer": feedback,
