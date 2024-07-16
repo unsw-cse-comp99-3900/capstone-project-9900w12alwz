@@ -60,8 +60,8 @@
   --custom-chat-message-user-file-block-file-icon-color:#171717;
   --custom-chat-inputbox-upload-file-list-background-color:#f7f7f7;
   --custom-chat-inputbox-upload-file-list-border-color: #e0e0e0;
-  --custom-chat-inputbox-background-color: #242424;
-  --custom-chat-inputbox-border-color: #404040;
+  --custom-chat-inputbox-background-color: #f7f7f7;
+  --custom-chat-inputbox-border-color: #e0e0e0;
   color-scheme: light;
 }
 
