@@ -86,54 +86,13 @@ const Chat = () => {
 </bpmn:definitions>
     `
 
-    const initialMessages = [
-      // {
-      //   content: 'Generate a capability map',
-      //   isUser: true,
-      //   type: 'text'
-      // },
-      // {
-      //   content: treeData,
-      //   isUser: false,
-      //   type: 'capabilityMap'
-      // },
-      {
-        content: 'Generate a BPMN',
-        isUser: true,
-        type: 'text'
-      },
-      {
-        content: bpmnSample,
-        isUser: false,
-        type: 'bpmn'
-      },
-      {
-        content: '',
-        file: {
-          name: 'example.png',
-          size: 12345,
-          type: 'image/png',
-          url: 'path/to/example.png'
-        },
-        isUser: true,
-        type: 'file'
-      },
-      {
-        content: 'Here is a file for you',
-        file: {
-          name: 'example.pdf',
-          size: 23456,
-          type: 'application/pdf',
-          url: 'path/to/example.pdf'
-        },
-        isUser: true,
-        type: 'fileWithText'
-      }
-    ];
-
-    setTimeout(() => {
-      setMessages(initialMessages);
-    }, 1000);
+    // const initialMessages = [
+    //
+    // ];
+    //
+    // setTimeout(() => {
+    //   setMessages(initialMessages);
+    // }, 1000);
 
   }, []);
 
@@ -190,8 +149,6 @@ const Chat = () => {
       formData.append(`image`, file);
     });
 
-    console.log(formData);
-
     setIsLoading(true);
 
     try {
@@ -205,11 +162,23 @@ const Chat = () => {
         const { answer, type } = data;
 
         if (type === 'capabilityMap') {
-          const jsonString = answer.match(/JSON: ({.*?}) \|\|\|\|\|/s)[1];
+          const jsonString = answer.match(/JSON: ({.*?}) \|\|\|\|\|\|/s)[1];
           const capabilityMap = JSON.parse(jsonString);
           const csvString = answer.match(/CSV: (.*)$/s)[1].trim();
           const treeData = convertToTreeData(capabilityMap['Capability Map'])[0];
           addMessage({ content: treeData, csv: csvString, isUser: false, type: 'capabilityMap' });
+        } else if (type === 'image') {
+          const preContent = answer.split('```xml')[0].trim();
+          const bpmnMatch = answer.match(/```xml([\s\S]*?)```/);
+          const bpmnPart = bpmnMatch ? bpmnMatch[1].trim() : '';
+          const tailContent = answer.split('```')[2]?.trim();
+          addMessage({
+            preContent: preContent,
+            tailContent: tailContent,
+            bpmn: bpmnPart,
+            isUser: false,
+            type: 'bpmnWithPreText'
+          });
         } else {
           addMessage({ content: answer, isUser: false });
         }
@@ -219,10 +188,6 @@ const Chat = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleUpload = (files) => {
-    console.log('Upload clicked:', files);
   };
 
   // Used to calculate and update the window height on the mobile device
@@ -313,7 +278,7 @@ const Chat = () => {
           <div ref={messagesEndRef}/>
         </div>
         <div className="input-box-container">
-          <InputBox onSend={handleSend} onUpload={handleUpload}/>
+          <InputBox onSend={handleSend}/>
         </div>
       </div>
     </div>

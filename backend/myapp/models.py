@@ -5,6 +5,7 @@ from langchain.memory import ChatMessageHistory
 import base64
 import requests
 
+
 class ChatBot:
     _instance = None
 
@@ -43,7 +44,7 @@ class ChatBot:
             # prompt from rules
             prompt_rules = f"""
                     Based on the user's input, here are some conversational rules to follow:
-                        1. If the user's question involves creating a Capability Map and they have not provided the number of levels needed in the Capability Map and the number of capabilities required for each level, please ask the user for these details.            
+                        1. If the user's question involves creating a Capability Map but does not provide details on the number of levels needed or the number of capabilities required for each level, politely inquire about these specifics to ensure comprehensive support. Always prioritize the user's immediate questions and needs. Use follow-up questions judiciously to enhance clarity and avoid overwhelming the user with requests for information.
                         2. If the user's question involves generating a Capability Map task, please return only the corresponding JSON and CSV content in the following format: 
                             ```JSON
                                 jsoncontent
@@ -51,7 +52,6 @@ class ChatBot:
                             ```CSV 
                                 csvcontent
                             ```.
-
                         The user's request is: {question}
                     """
             # system prompt
@@ -80,30 +80,15 @@ class ChatBot:
             )
 
         else:
-            # 将图像文件转换为 Base64 编码
             base64_image = base64.b64encode(image.read()).decode('utf-8')
-
-            # message = [
-            #     {"role": "system",
-            #      "content": "You are a bot that is good at converting different type of diagrams to BPMN xml format"
-            #      },
-            #     {"role": "system",
-            #      "content": "always output the bpmn xml format at the end"
-            #      },
-            #     {"role": "user",
-            #      "content": [
-            #          {"type": "text", "text": f"{question}"},
-            #          {"type": "image_url", "image_url": {
-            #              "url": f"data:image/png;base64,{base64_image}"}
-            #          }
-            #      ]}
-            # ]
             systemMsg = SystemMessage(
                 content=[
                     {"type": "text",
-                     "text": "You are a bot that is good at converting different type of diagrams to BPMN XML format"},
+                     "text": "You are a bot that is good at converting different type of diagrams to BPMN 2.0 XML format"},
                     {"type": "text",
-                     "text": "output the BPMN XML format"},
+                     "text": "output the BPMN 2.0 XML format,Ensure that all BPMN elements have the bpmn: namespace prefix in the generated XML."},
+                    {"type": "text",
+                     "text": "The generated XML should be structured to render correctly in front-end BPMN visualization tools. e.g. contain the "},
                     {"type": "text",
                      "text": """If the output content includes XML, 
                      format it using triple backticks and label it as XML like this:
@@ -120,11 +105,9 @@ class ChatBot:
                 ],
             )
 
-        response = llm.invoke([systemMsg, huamanMsg])
+        self.chat_history.messages.extend([huamanMsg, systemMsg])
+        response = llm.invoke(self.chat_history.messages)
         self.chat_history.add_ai_message(response)
-        print(response.content)
-        print(self.chat_history.messages)
-
         return response.content
 
 

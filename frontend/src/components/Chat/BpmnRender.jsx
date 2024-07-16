@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import Viewer from 'bpmn-js/lib/Viewer';
+import BpmnViewer from 'bpmn-js/lib/Viewer';
 import './css/BpmnRender.css';
 
 const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
@@ -11,14 +11,14 @@ const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
   }));
 
   useEffect(() => {
-    viewerRef.current = new Viewer({
+    viewerRef.current = new BpmnViewer({
       container: canvasRef.current,
     });
 
     const renderDiagram = async () => {
       try {
-        const canvas = viewerRef.current.get('canvas');
         await viewerRef.current.importXML(bpmnXML);
+        const canvas = viewerRef.current.get('canvas');
         if (canvas && canvas.viewbox) {
           const { inner } = canvas.viewbox();
           const center = {
