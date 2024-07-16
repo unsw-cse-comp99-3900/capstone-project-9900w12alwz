@@ -1,5 +1,6 @@
 // src/components/Admin/Sidebar.jsx
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { ListBox } from 'primereact/listbox';
 import { ScrollPanel } from 'primereact/scrollpanel';
@@ -10,8 +11,10 @@ import { put } from '../../api';
 const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPrompt,
   setSelectedPrompt, addNewPrompt, setPrompts }) => {
 
-  const [visibleOverlay, setVisibleOverlay] = useState(null); 
-  const overlayPanelRefs = useRef({}); 
+  const [visibleOverlay, setVisibleOverlay] = useState(null);
+  const overlayPanelRefs = useRef({});
+
+  const navigate = useNavigate();
 
   const onPromptSelect = (e) => {
     if (e.value && (!selectedPrompt || e.value.id !== selectedPrompt.id)) {
@@ -25,6 +28,10 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPromp
     } else {
       setIsPanelCollapsed(false);
     }
+  };
+
+  const goToChat = () => {
+    navigate('/chat');
   };
 
   useEffect(() => {
@@ -45,7 +52,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPromp
       });
 
       await Promise.all(updatedPrompts.map((prompt) => put(`/prompts/${prompt.id}/`, prompt)));
-      
+
       const sortedPrompts = updatedPrompts.sort((a, b) => b.is_default - a.is_default);
 
       setPrompts(sortedPrompts);
@@ -66,11 +73,18 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPromp
           onClick={() => setIsPanelCollapsed(!isPanelCollapsed)}
         />
         {!isPanelCollapsed && (
-          <Button
-            icon="pi pi-pencil"
-            className="p-button-icon-only"
-            onClick={addNewPrompt}
-          />
+          <>
+            <Button
+              icon="pi pi-pencil"
+              className="p-button-icon-only"
+              onClick={addNewPrompt}
+            />
+            <Button
+              icon="pi pi-home"
+              className="p-button-icon-only"
+              onClick={goToChat}
+            />
+          </>
         )}
       </div>
       {!isPanelCollapsed && (
@@ -88,15 +102,19 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPromp
               return (
                 <div className={`admin-list-box-item ${option.is_default ? 'default' : ''}`}>
                   <span className="admin-item-left">{option.name}</span>
-                  <Button
-                    icon="pi pi-ellipsis-h"
-                    className="p-button-rounded p-button-text admin-item-right"
-                    onClick={(e) => {
-                      setVisibleOverlay(option.id);
-                      overlayPanelRefs.current[option.id].current.toggle(e);
-                    }}
-                    style={{ marginLeft: 'auto' }}
-                  />
+                  {option.is_default ? (
+                    <i className="pi pi-star admin-item-right" style={{ marginLeft: 'auto' }}></i>
+                  ) : (
+                    <Button
+                      icon="pi pi-ellipsis-h"
+                      className="p-button-rounded p-button-text admin-item-right"
+                      onClick={(e) => {
+                        setVisibleOverlay(option.id);
+                        overlayPanelRefs.current[option.id].current.toggle(e);
+                      }}
+                      style={{ marginLeft: 'auto' }}
+                    />
+                  )}
                   <OverlayPanel
                     ref={overlayPanelRefs.current[option.id]}
                     dismissable
