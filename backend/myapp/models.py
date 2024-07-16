@@ -90,20 +90,23 @@ class ChatBot:
                 content=[
                     {"type": "text",
                      "text": """
-                     you are a bot to convert the different diagrams to a bpmn 2.0 xml format
-                     by giving users image by following instructions
+                     you are a bot to convert different diagrams to a BPMN 2.0 XML format by following these instructions:
 
-                     1. Create a BPMN 2.0 XML format that includes graphical information for all process elements and make sure do not omit any parts.
-                     2. emphasizing that the output must include layout and positional details for each element.
-                     the graphical information (positions and sizes of elements) must be included in this snippet for brevity. 
-                     In a complete implementation, you would include `<bpmndi:BPMNShape>` and `<bpmndi:BPMNEdge>` elements 
-                     to define the visual representation of the process
-                     3. Each connection between the elements should be detailed, showing how each element interacts within the process.
-                     4. Ensure all BPMN elements have the bpmn: namespace prefix in the generated XML.
-                     5. When presenting XML content, format it using triple backticks and label it as XML like this
-                     ```xml
+1. Create a BPMN 2.0 XML format that includes graphical information for all process elements. Ensure not to omit any parts.
+2. Emphasize that the output must include layout and positional details for each element. The graphical information (positions and sizes of elements) must be included for completeness
+3. Include <bpmndi:BPMNShape> elements for each BPMN element to define its graphical representation.
+4. Include <bpmndi:BPMNEdge> elements for each connection to ensure arrows are properly connected between elements.
+5. Detail each connection between the elements, showing how each element interacts within the process.
+6. Ensure all BPMN elements have the bpmn: namespace prefix in the generated XML.
+7. When presenting XML content, format it using triple backticks and label it as XML, like this
+                      ```xml
                         xml content
                         ```
+                        
+                        For example:
+xml <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1"> <bpmn:process id="process_1" isExecutable="true"> <bpmn:startEvent id="StartEvent_1" name="Start"/> <bpmn:task id="Task_1" name="Task 1"/> <bpmn:task id="Task_2" name="Task 2"/> <bpmn:endEvent id="EndEvent_1" name="End"/> <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_1"/> <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_1" targetRef="Task_2"/> <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_2" targetRef="EndEvent_1"/> </bpmn:process> <bpmndi:BPMNDiagram id="BPMNDiagram_1"> <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_1"> <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1"> <dc:Bounds x="150" y="100" width="36" height="36"/> </bpmndi:BPMNShape> <bpmndi:BPMNShape id="Task_1_di" bpmnElement="Task_1"> <dc:Bounds x="250" y="100" width="80" height="100"/> </bpmndi:BPMNShape> <bpmndi:BPMNShape id="Task_2_di" bpmnElement="Task_2"> <dc:Bounds x="400" y="100" width="80" height="100"/> </bpmndi:BPMNShape> <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1"> <dc:Bounds x="550" y="100" width="36" height="36"/> </bpmndi:BPMNShape> <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1"> <di:waypoint x="186" y="118"/> <di:waypoint x="250" y="150"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2"> <di:waypoint x="330" y="150"/> <di:waypoint x="400" y="150"/> </bpmndi:BPMNEdge> <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3"> <di:waypoint x="480" y="150"/> <di:waypoint x="550" y="150"/> </bpmndi:BPMNEdge> </bpmndi:BPMNPlane> </bpmndi:BPMNDiagram> </bpmn:definitions>
+
+This example includes both <bpmndi:BPMNShape> and <bpmndi:BPMNEdge> elements with precise coordinates and dimensions to ensure proper graphical representation.
                     """}
                 ]
             )
