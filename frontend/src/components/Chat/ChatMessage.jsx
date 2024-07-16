@@ -29,7 +29,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
 
   const handleDownloadCsv = () => {
     try {
-      const flattenedData = flattenTreeData(message.content);
+      const flattenedData = flattenTreeData(message.content[0]);
       const fields = ['key', 'label'];
       const parser = new Parser({ fields });
       const csv = parser.parse(flattenedData);
