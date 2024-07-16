@@ -77,6 +77,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
           </div>
         );
       case 'bpmnWithPreText':
+        console.log(message)
         return (
           <div className="message-block" style={{ width: '100%' }}>
             <div className="message" style={{ width: '100%' }}>

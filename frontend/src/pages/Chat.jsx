@@ -86,13 +86,13 @@ const Chat = () => {
 </bpmn:definitions>
     `
 
-    const initialMessages = [
-
-    ];
-
-    setTimeout(() => {
-      setMessages(initialMessages);
-    }, 1000);
+    // const initialMessages = [
+    //
+    // ];
+    //
+    // setTimeout(() => {
+    //   setMessages(initialMessages);
+    // }, 1000);
 
   }, []);
 
