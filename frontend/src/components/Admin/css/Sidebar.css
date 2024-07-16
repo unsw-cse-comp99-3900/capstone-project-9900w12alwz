@@ -3,8 +3,10 @@
     background: #f4f4f4;
     padding: 1em;
     transition: width 0.3s ease-in-out;
-    height: 100vh; /* 确保 Sidebar 高度为视口高度 */
-    overflow: hidden; /* 禁止 Sidebar 外部滚动 */
+    height: 100vh;
+
+    overflow: hidden;
+
 }
 
 .sidebar.collapsed {
@@ -25,7 +27,8 @@
 }
 
 .list-box {
-    width: 100%; /* 或者设置一个合适的宽度值，例如 80% */
+    width: 100%;
+
 }
 
 .admin-list-box-item {
@@ -33,7 +36,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.5em 0;
-    width: 100%; /* 确保父元素的宽度 */
+    width: 100%;
+
 }
 
 .admin-item-left {
@@ -46,6 +50,13 @@
 }
 
 .admin-list-box-item.default {
-    background-color: #d1e7dd; /* 高亮背景色 */
-    font-weight: bold; /* 加粗字体 */
-  }
+    background-color: #d1e7dd;
+
+    font-weight: bold;
+
+}
+
+.admin-list-box-item.default .admin-item-right {
+    color: blue;
+    padding-right: 13px;
+}
