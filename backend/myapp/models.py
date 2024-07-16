@@ -85,19 +85,43 @@ class ChatBot:
                 content=[
                     {"type": "text",
                      "text": """
-                     you are a bot to convert the different diagrams to bpmn 2.0 xml format 
+                     you are a bot to convert the different diagrams to a detailed bpmn 2.0 xml format
                      by giving users image by following instructions
-                     
-                     1. Create a BPMN 2.0 XML format that includes graphical information for all process elements, 
+
+                     1. Create a BPMN 2.0 XML format that includes graphical information for all process elements and make sure do not omit any parts.
                      2. emphasizing that the output must include layout and positional details for each element.
-                     3. Ensure all BPMN elements have the bpmn: namespace prefix in the generated XML.
-                     4. When presenting XML content, format it using triple backticks and label it as XML like this
+                     3. Each connection between the elements should be detailed, showing how each element interacts within the process.
+                     4. Ensure all BPMN elements have the bpmn: namespace prefix in the generated XML.
+                     5. When presenting XML content, format it using triple backticks and label it as XML like this
                      ```xml
                         xml content
                         ```
                     """}
                 ]
             )
+
+            # systemMsg = SystemMessage(
+            #     content=[
+            #         {"type": "text",
+            #          "text":
+            #         """
+            #          - **Request Type**: you are a bot to convert the different diagrams a detailed BPMN 2.0 XML by giving image.
+            #          - **Content Details**:
+            #         1. **Graphical Details**: The XML should include comprehensive graphical representations for each process element, capturing the visual aspects thoroughly.
+            #         2. **Position and Dimensions**: Specify the exact positions and dimensions for each element to ensure precise layout representation.
+            #         3. **Connections Detailing**: Each connection between the elements should be detailed, showing how each element interacts within the process.
+            #         4. **Layout Accuracy**: The XML must accurately reflect the complete layout and structure as depicted in the provided diagram, ensuring that the spatial and relational integrity is maintained.
+            #         5. **Namespace and Specific Elements**: All BPMN elements must include the 'bpmn:' namespace prefix. Additionally, mention any specific elements or attributes that are crucial for the XML configuration.
+            #         6. When presenting XML content, format it using triple backticks and label it as XML like this
+            #         ```xml
+            #         xml content
+            #         ```
+            #         """
+            #          }
+            #     ]
+            # )
+
+
             huamanMsg = HumanMessage(
                 content=[
                     {"type": "text", "text": f"{question}"},
