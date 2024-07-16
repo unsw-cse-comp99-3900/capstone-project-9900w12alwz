@@ -5,6 +5,7 @@ from langchain.memory import ChatMessageHistory
 import base64
 import requests
 
+
 class ChatBot:
     _instance = None
 
@@ -74,30 +75,15 @@ class ChatBot:
             )
 
         else:
-            # 将图像文件转换为 Base64 编码
             base64_image = base64.b64encode(image.read()).decode('utf-8')
-
-            # message = [
-            #     {"role": "system",
-            #      "content": "You are a bot that is good at converting different type of diagrams to BPMN xml format"
-            #      },
-            #     {"role": "system",
-            #      "content": "always output the bpmn xml format at the end"
-            #      },
-            #     {"role": "user",
-            #      "content": [
-            #          {"type": "text", "text": f"{question}"},
-            #          {"type": "image_url", "image_url": {
-            #              "url": f"data:image/png;base64,{base64_image}"}
-            #          }
-            #      ]}
-            # ]
             systemMsg = SystemMessage(
                 content=[
                     {"type": "text",
                      "text": "You are a bot that is good at converting different type of diagrams to BPMN 2.0 XML format"},
                     {"type": "text",
                      "text": "output the BPMN 2.0 XML format,Ensure that all BPMN elements have the bpmn: namespace prefix in the generated XML."},
+                    {"type": "text",
+                     "text": "The generated XML should be structured to render correctly in front-end BPMN visualization tools. e.g. contain the "},
                     {"type": "text",
                      "text": """If the output content includes XML, 
                      format it using triple backticks and label it as XML like this:
@@ -114,11 +100,9 @@ class ChatBot:
                 ],
             )
 
-        response = llm.invoke([systemMsg, huamanMsg])
+        self.chat_history.messages.extend([huamanMsg, systemMsg])
+        response = llm.invoke(self.chat_history.messages)
         self.chat_history.add_ai_message(response)
-        print(response.content)
-        print(self.chat_history.messages)
-
         return response.content
 
 
