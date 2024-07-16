@@ -115,17 +115,16 @@ const Chat = () => {
     Object.keys(obj).forEach((key) => {
       const uniqueKey = parentKey ? `${parentKey}.${currentIndex}` : `${currentIndex}`;
       const labelWithLevel = parentKey ? `${parentKey}.${currentIndex} ${key}` : `${currentIndex} ${key}`;
-      const children = convertToTreeData(obj[key], uniqueKey, level + 1, false);
+      const children = convertToTreeData(obj[key], uniqueKey, level + 1);
       const node = {
         key: uniqueKey,
-        label: labelWithLevel
+        label: labelWithLevel,
+        children: children.length ? children : null
       };
-      if (children.length) {
-        node.children = children;
-      }
       result.push(node);
       currentIndex += 1;
     });
+
     return result;
   };
 
@@ -162,11 +161,11 @@ const Chat = () => {
         const { answer, type } = data;
 
         if (type === 'capabilityMap') {
-          const jsonString = answer.match(/JSON: ({.*?}) \|\|\|\|\|\|/s)[1];
+          const jsonString = answer.match(/```JSON\s+({[\s\S]*?})\s+```/)[1];
           const capabilityMap = JSON.parse(jsonString);
-          const csvString = answer.match(/CSV: (.*)$/s)[1].trim();
-          const treeData = convertToTreeData(capabilityMap['Capability Map'])[0];
-          addMessage({ content: treeData, csv: csvString, isUser: false, type: 'capabilityMap' });
+          // const csvString = answer.match(/CSV: (.*)$/s)[1].trim();
+          const treeData = convertToTreeData(capabilityMap);
+          addMessage({ content: treeData, isUser: false, type: 'capabilityMap' });
         } else if (type === 'image') {
           const preContent = answer.split('```xml')[0].trim();
           const bpmnMatch = answer.match(/```xml([\s\S]*?)```/);

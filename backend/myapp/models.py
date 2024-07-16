@@ -89,15 +89,15 @@ class ChatBot:
             systemMsg = SystemMessage(
                 content=[
                     {"type": "text",
-                     "text": "You are a bot that is good at converting different type of diagrams to BPMN 2.0 XML format"},
-                    {"type": "text",
-                     "text": "output the BPMN 2.0 XML format,Ensure that all BPMN elements have the bpmn: namespace prefix in the generated XML."},
-                    {"type": "text",
-                     "text": "The generated XML should be structured to render correctly in front-end BPMN visualization tools. e.g. contain the "},
-                    {"type": "text",
-                     "text": """If the output content includes XML, 
-                     format it using triple backticks and label it as XML like this:
-                        ```xml
+                     "text": """
+                     you are a bot to convert the different diagrams to bpmn 2.0 xml format 
+                     by giving users image by following instructions
+                     
+                     1. Create a BPMN 2.0 XML format that includes graphical information for all process elements, 
+                     2. emphasizing that the output must include layout and positional details for each element.
+                     3. Ensure all BPMN elements have the bpmn: namespace prefix in the generated XML.
+                     4. When presenting XML content, format it using triple backticks and label it as XML like this
+                     ```xml
                         xml content
                         ```
                     """}
@@ -111,8 +111,10 @@ class ChatBot:
             )
 
         self.chat_history.messages.extend([huamanMsg, systemMsg])
+
         response = llm.invoke(self.chat_history.messages)
         self.chat_history.add_ai_message(response)
+        print(response.content)
         return response.content
 
 

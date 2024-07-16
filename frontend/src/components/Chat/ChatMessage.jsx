@@ -7,6 +7,7 @@ import { IconFileTypeSvg, IconFileTypeCsv, IconFileDescription } from '@tabler/i
 import DOMPurify from 'dompurify';
 import './css/ChatMessage.css';
 import BpmnRender from "./BpmnRender";
+import LoadingMessage from './LoadingMessage';
 
 const flattenTreeData = (node, parentKey = '') => {
   const rows = [];
@@ -28,7 +29,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
 
   const handleDownloadCsv = () => {
     try {
-      const flattenedData = flattenTreeData(message.content);
+      const flattenedData = flattenTreeData(message.content[0]);
       const fields = ['key', 'label'];
       const parser = new Parser({ fields });
       const csv = parser.parse(flattenedData);
@@ -58,13 +59,14 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
 
   const renderMessageContent = () => {
     if (isLoading) {
-      return <div className="message loading-message"><i className="pi pi-spinner pi-spin"></i></div>;
+      return <LoadingMessage />;
     }
     switch (message.type) {
       case 'capabilityMap':
+        console.log(message)
         return (
           <div className="message-block" style={{ minWidth: '50%' }}>
-            <div className="message"><Tree value={[message.content]} style={{ fontSize: '1rem' }}/>
+            <div className="message"><Tree value={[message.content][0]} style={{ fontSize: '1rem' }}/>
             </div>
             <div className="message-tool-button-container">
               <Button
@@ -98,7 +100,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
                 className="p-button-rounded p-button-icon-only message-tool-button"
                 onClick={handleDownloadSvg}
               >
-              <IconFileTypeSvg className="message-tool-button-icon" size={20}/>
+                <IconFileTypeSvg className="message-tool-button-icon" size={20}/>
               </Button>
             </div>
           </div>
@@ -139,8 +141,8 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
   return (
     <div className={`message-container ${isUser ? 'user' : 'other'} ${showBubble ? 'bubble' : ''}`}>
       {!isUser && (
-        <div className="message-avatar">
-          <Avatar icon="pi pi-microchip-ai" shape="circle"/>
+        <div className="message-avatar-container">
+          <Avatar icon="pi pi-microchip-ai" shape="circle" className="message-avatar"/>
         </div>
       )}
       {renderMessageContent()}
