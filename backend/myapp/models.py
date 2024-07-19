@@ -45,13 +45,38 @@ class ChatBot:
             prompt_rules = f"""
                     Based on the user's input, here are some conversational rules to follow:
                         1. If the user's question involves creating a Capability Map but does not provide details on the number of levels needed or the number of capabilities required for each level, politely inquire about these specifics to ensure comprehensive support. Always prioritize the user's immediate questions and needs. Use follow-up questions judiciously to enhance clarity and avoid overwhelming the user with requests for information.
-                        2. If the user's question involves generating a Capability Map task, please return only the corresponding JSON and CSV content in the following format: 
-                            ```JSON
-                                jsoncontent
-                            ```, 
-                            ```CSV 
-                                csvcontent
-                            ```.
+                        2. If the user's question involves generating a Capability Map, please generate the corresponding JSON and CSV content based on the user's request. A question involves a Capability Map if it includes phrases like "Capability Map," "capability map," "generate a capability map," "give a capability map," or any similar variations. And return the output in the following format: 
+                        ```JSON
+                        {
+                            "Level 1": {
+                                "Capability 1": "Description",
+                                "Capability 2": "Description",
+                                "Capability 3": "Description",
+                                "Capability 4": "Description",
+                                "Capability 5": "Description"
+                            },
+                            "Level 2": {
+                                "Capability 1": "Description",
+                                "Capability 2": "Description",
+                                "Capability 3": "Description",
+                                "Capability 4": "Description",
+                                "Capability 5": "Description"
+                            }
+                        }
+                        ```,
+                        ```csv
+                        Level,Capability,Description
+                        Level 1,Capability 1,Description
+                        Level 1,Capability 2,Description
+                        Level 1,Capability 3,Description
+                        Level 1,Capability 4,Description
+                        Level 1,Capability 5,Description
+                        Level 2,Capability 1,Description
+                        Level 2,Capability 2,Description
+                        Level 2,Capability 3,Description
+                        Level 2,Capability 4,Description
+                        Level 2,Capability 5,Description
+                        ```.
                         The user's request is: {question}
                     """
             # system prompt
