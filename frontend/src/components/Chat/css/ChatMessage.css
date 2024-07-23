@@ -147,5 +147,9 @@
 }
 
 .loading-message-outer{
+    align-self: center;
+}
 
+.loading-message span {
+    vertical-align: top;
 }
