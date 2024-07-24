@@ -4,6 +4,8 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import './Admin.css';
 import Sidebar from '../components/Admin/Sidebar';
+import PromptList from '../components/Admin/PromptList';
+import { ListBox } from 'primereact/listbox'; 
 
 import { get, post, put, del } from '../api';
 
@@ -71,6 +73,16 @@ const Admin = () => {
       />
       <div className="main-content">
         <h1>Prompt</h1>
+        <div>
+          <div className="list-header">
+
+          </div>
+          <PromptList 
+            selectedPrompt={selectedPrompt}
+            prompts={prompts}
+            setSelectedPrompt={setSelectedPrompt}
+          />
+        </div>
         <div className="input-container">
           <div className="input-group">
             <label htmlFor="prompt-id">Prompt ID</label>

@@ -14,9 +14,9 @@
     min-height: var(--doc-height);
 }
 
-.p-listbox-list-wrapper{
+/* .p-listbox-list-wrapper{
     height: calc(var(--doc-height) - 4.2rem - 4px);
-}
+} */
 
 .sidebar-header {
     width: 100%;

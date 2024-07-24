@@ -7,6 +7,7 @@ import { ScrollPanel } from 'primereact/scrollpanel';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import './css/Sidebar.css';
 import { put } from '../../api';
+import ThemeSwitcher from "../ThemeSwitcher";
 
 const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPrompt,
   setSelectedPrompt, addNewPrompt, setPrompts }) => {
@@ -23,7 +24,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPromp
   };
 
   const handleResize = () => {
-    if (window.innerWidth < 1600) {
+    if (window.innerWidth < 600) {
       setIsPanelCollapsed(true);
     } else {
       setIsPanelCollapsed(false);
@@ -75,13 +76,14 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, prompts, selectedPromp
         {!isPanelCollapsed && (
           <>
             <Button
-              icon="pi pi-pencil"
+              icon="pi pi-pen-to-square"
               className="p-button-icon-only"
               onClick={addNewPrompt}
             />
+            <ThemeSwitcher/>
             <Button
               icon="pi pi-home"
-              className="p-button-icon-only"
+              className="p-button-rounded p-button-icon-only"
               onClick={goToChat}
             />
           </>
