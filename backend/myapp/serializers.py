@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from drf_yasg import openapi
-from .models import Prompt
+from .models import Prompt, PromptGroup
 
 # 定义 Swagger 文档中的请求体和响应体
 question_schema = openapi.Schema(
@@ -25,4 +25,9 @@ response_schema = openapi.Response(
 class PromptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prompt
-        fields = ['id', 'text', 'name', 'is_default']
+        fields = ['id', 'text', 'is_default', 'name', 'group']
+
+class PromptGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PromptGroup
+        fields = ['group_id', 'group_name']

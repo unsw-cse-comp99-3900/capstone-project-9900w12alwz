@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from .models import ChatBot, Prompt
-from .serializers import PromptSerializer, question_schema, response_schema
+from .models import ChatBot, Prompt, PromptGroup
+from .serializers import PromptSerializer, PromptGroupSerializer, question_schema, response_schema
 
 class ChatAPIView(APIView):
     bot = ChatBot()  # Singleton instance
@@ -137,5 +137,108 @@ class DefaultPromptAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Prompt.DoesNotExist:
             return Response({"error": "Default prompt not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PromptGroupListCreateAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id="list_prompt_groups",
+        operation_summary="List all prompt groups",
+        operation_description="Retrieve a list of all prompt groups.",
+        responses={200: PromptGroupSerializer(many=True), 500: "Internal Server Error"}
+    )
+    def get(self, request, *args, **kwargs):
+        try:
+            groups = PromptGroup.objects.all()
+            serializer = PromptGroupSerializer(groups, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_id="create_prompt_group",
+        operation_summary="Create a new prompt group",
+        operation_description="Create a new prompt group with the provided name.",
+        request_body=PromptGroupSerializer,
+        responses={200: PromptGroupSerializer, 500: "Internal Server Error"}
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = PromptGroupSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PromptGroupDetailAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id="retrieve_prompt_group",
+        operation_summary="Retrieve a prompt group",
+        operation_description="Retrieve a prompt group by its ID.",
+        responses={200: PromptGroupSerializer, 500: "Internal Server Error"}
+    )
+    def get(self, request, id, *args, **kwargs):
+        try:
+            group = PromptGroup.objects.get(pk=id)
+            serializer = PromptGroupSerializer(group)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except PromptGroup.DoesNotExist:
+            return Response({"error": "Prompt group not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_id="update_prompt_group",
+        operation_summary="Update a prompt group",
+        operation_description="Update the name of a prompt group by its ID.",
+        request_body=PromptGroupSerializer,
+        responses={200: PromptGroupSerializer, 500: "Internal Server Error"}
+    )
+    def put(self, request, id, *args, **kwargs):
+        try:
+            group = PromptGroup.objects.get(pk=id)
+            serializer = PromptGroupSerializer(group, data=request.data)
+            if serializer.is_valid():
+                try:
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                except Exception as e:
+                    return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except PromptGroup.DoesNotExist:
+            return Response({"error": "Prompt group not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @swagger_auto_schema(
+        operation_id="delete_prompt_group",
+        operation_summary="Delete a prompt group",
+        operation_description="Delete a prompt group by its ID.",
+        responses={200: "No Content", 500: "Internal Server Error"}
+    )
+    def delete(self, request, id, *args, **kwargs):
+        try:
+            group = PromptGroup.objects.get(pk=id)
+            group.delete()
+            return Response(status=status.HTTP_200_OK)
+        except PromptGroup.DoesNotExist:
+            return Response({"error": "Prompt group not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PromptByGroupAPIView(APIView):
+    @swagger_auto_schema(
+        operation_id="list_prompts_by_group",
+        operation_summary="List all prompts by group",
+        operation_description="Retrieve all prompts for a given group ID.",
+        responses={200: PromptSerializer(many=True), 500: "Internal Server Error"}
+    )
+    def get(self, request, group_id, *args, **kwargs):
+        try:
+            prompts = Prompt.objects.filter(group=group_id)
+            serializer = PromptSerializer(prompts, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

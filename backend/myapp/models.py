@@ -274,9 +274,16 @@ This example includes both <bpmndi:BPMNShape> and <bpmndi:BPMNEdge> elements wit
 
 
 class Prompt(models.Model):
+    id = models.AutoField(primary_key=True)
     text = models.TextField()
     name = models.TextField(default="test")
     is_default = models.IntegerField(default=0)  # 添加默认值
+    group = models.IntegerField()
 
     def __str__(self):
         return self.name
+
+
+class PromptGroup(models.Model):
+    group_id = models.AutoField(primary_key=True)
+    group_name = models.CharField(max_length=255)
