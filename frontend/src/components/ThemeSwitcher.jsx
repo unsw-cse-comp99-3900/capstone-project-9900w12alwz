@@ -40,7 +40,7 @@ const ThemeSwitcher = () => {
     <Button
       ref={buttonRef}
       icon={isDarkTheme ? 'pi pi-sun' : 'pi pi-moon'}
-      className="p-button-rounded p-button-icon-only"
+      className="p-button-icon-only theme-switcher"
       onClick={toggleTheme}
     />
   );

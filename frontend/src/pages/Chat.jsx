@@ -167,12 +167,10 @@ const Chat = () => {
         <div className={`main-content-header ${!isSidebarVisible ? 'collapsed' : ''}`}>
         </div>
         <div className="main-tool-bar">
-          <div className={`main-tool-bar-tools ${!isSidebarVisible ? 'collapsed' : ''}`}>
+          <div className={`main-tool-bar-misc`}>
             <Button icon="pi pi-pen-to-square" className="new-chat-btn" onClick={resetConversation}/>
             <ThemeSwitcher/>
-          </div>
-          <div className={`main-tool-bar-misc`}>
-            <Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-rounded p-button-icon-only"/>
+            <Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-icon-only navigation-to-admin"/>
           </div>
         </div>
         <div className="messages">

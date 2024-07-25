@@ -62,8 +62,8 @@ html, body {
 .main-tool-bar-tools {
     /*Sidebar disabled*/
     /*width: 250px;*/
-    width: 115px;
-    padding: 10px;
+    width: 195px;
+    padding: calc(1em + 10px);;
     display: flex;
     align-items: center;
     align-content: center;
@@ -72,7 +72,11 @@ html, body {
 }
 
 .main-tool-bar-misc {
-    padding: 10px;
+    width: 195px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(1em + 10px);;
 }
 
 .main-tool-bar-tools.collapsed {
