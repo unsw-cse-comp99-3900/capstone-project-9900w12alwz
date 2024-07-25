@@ -114,6 +114,7 @@ const setDefaultPrompt = async (promptId) => {
         <Button
           icon="pi pi-plus"
           label="Add New Prompt"
+          className="add-new-prompt"
           onClick={addNewPrompt}
         />
       </div>
@@ -122,7 +123,7 @@ const setDefaultPrompt = async (promptId) => {
         options={prompts}
         onChange={onPromptSelect}
         optionLabel="name"
-        className="list-box"
+        className="list-box prompts-list"
         itemTemplate={(option) => {
           if (!overlayPanelRefs.current[option.id]) {
             overlayPanelRefs.current[option.id] = React.createRef();
@@ -149,7 +150,7 @@ const setDefaultPrompt = async (promptId) => {
                 <div className="button-group">
                   <Button
                     label="Set Default"
-                    className="p-button-secondary"
+                    className="p-button-secondary set-default-prompt"
                     onClick={() => setDefaultPrompt(option.id)}
                   />
                 </div>

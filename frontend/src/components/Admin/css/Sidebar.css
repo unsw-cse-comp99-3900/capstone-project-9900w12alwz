@@ -20,15 +20,17 @@
 }
 
 .sidebar.collapsed {
-    width: 50px;
+    width: 80px;
     padding: 1em 0.5em;
+}
+.sidebar.collapsed .sidebar-header {
+    padding-left: calc(0.5em + 10px);
 }
 
 .sidebar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 1em;
     
 }
 

@@ -71,7 +71,7 @@ const fetchGroups = async () => {
       console.error('Group ID is undefined. Cannot fetch prompts.');
       return; // 立即退出函数，避免后续操作
     }
-  
+
     // console.log('Fetching prompts for group_id:', groupId);
     try {
       const response = await get(`/groups/${groupId}/prompts/`);
@@ -189,6 +189,7 @@ const fetchGroups = async () => {
             <Button
               label="Confirm"
               icon="pi pi-check"
+              className="confirm-modify-prompt"
               onClick={async () => {
                 try {
                   await put(`/prompts/${selectedPrompt.id}/`, selectedPrompt);
@@ -205,7 +206,7 @@ const fetchGroups = async () => {
             <Button
               label="Delete"
               icon="pi pi-trash"
-              className="p-button-danger"
+              className="p-button-danger delete-prompt"
               onClick={() => deletePrompt(selectedPrompt.id)}
             />
           </div>

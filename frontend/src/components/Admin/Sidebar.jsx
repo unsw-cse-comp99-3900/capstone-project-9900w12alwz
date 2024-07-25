@@ -86,20 +86,20 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
       <div className="sidebar-header">
         <Button
           icon="pi pi-bars"
-          className="p-button-icon-only"
+          className="p-button-icon-only toggle-collapse"
           onClick={() => setIsPanelCollapsed(!isPanelCollapsed)}
         />
         {!isPanelCollapsed && (
           <>
             <Button
               icon="pi pi-pen-to-square"
-              className="p-button-icon-only"
+              className="p-button-icon-only new-prompt"
               onClick={addNewGroup}
             />
             <ThemeSwitcher />
             <Button
               icon="pi pi-home"
-              className="p-button-rounded p-button-icon-only"
+              className="p-button-rounded p-button-icon-only navigate-to-chat"
               onClick={goToChat}
             />
           </>
@@ -112,7 +112,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
             options={groups}
             onChange={onGroupSelect}
             optionLabel="group_name"
-            className="list-box"
+            className="list-box sidebar-list"
             itemTemplate={(option) => {
               if (!overlayPanelRefs.current[option.group_id]) {
                 overlayPanelRefs.current[option.group_id] = React.createRef();
@@ -137,7 +137,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
                     <div className="button-group">
                       <Button
                         label="Delete"
-                        className="p-button-danger"
+                        className="p-button-danger sidebar-delete"
                         onClick={() => setGroupToDelete(option.group_id)}
                       />
                     </div>
