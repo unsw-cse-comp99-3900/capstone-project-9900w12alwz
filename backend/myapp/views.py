@@ -25,7 +25,8 @@ class ChatAPIView(APIView):
 
         print(question)
         feedback = self.bot.answer(question,upload_image)
-        type = "capabilityMap" if "```JSON" in feedback else "image" if "```xml" in feedback else "text"
+        feedback_lower = feedback.lower()  # 将 feedback 转换为小写
+        type = "capabilityMap" if "```json" in feedback_lower else "image" if "```xml" in feedback_lower else "text"
 
         response_data = {
             "answer": feedback,
