@@ -2,19 +2,23 @@ import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react
 import BpmnViewer from 'bpmn-js/lib/Viewer';
 import './css/BpmnRender.css';
 
+// BpmnRender component to render BPMN diagrams
 const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
-  const canvasRef = useRef(null);
-  const viewerRef = useRef(null);
+  const canvasRef = useRef(null); // Reference to the canvas element
+  const viewerRef = useRef(null); // Reference to the BPMN viewer instance
 
+  // Expose the exportToImage function to parent components
   useImperativeHandle(ref, () => ({
     exportToImage
   }));
 
   useEffect(() => {
+    // Initialize the BPMN viewer with the canvas element
     viewerRef.current = new BpmnViewer({
       container: canvasRef.current,
     });
 
+    // Function to render the BPMN diagram
     const renderDiagram = async () => {
       try {
         await viewerRef.current.importXML(bpmnXML);
@@ -25,8 +29,7 @@ const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
             x: inner.x + inner.width / 2,
             y: inner.y + inner.height / 2
           };
-          canvas.zoom('fit-viewport', center);
-          console.log('BPMN diagram rendered successfully');
+          canvas.zoom('fit-viewport', center); // Fit the diagram to the viewport
         } else {
           console.error('Canvas or viewbox not initialized');
         }
@@ -35,8 +38,9 @@ const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
       }
     };
 
-    renderDiagram();
+    renderDiagram(); // Call the render function
 
+    // Handle window resize event to adjust the BPMN diagram
     const handleResize = () => {
       if (viewerRef.current) {
         const canvas = viewerRef.current.get('canvas');
@@ -46,21 +50,23 @@ const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
             x: inner.x + inner.width / 2,
             y: inner.y + inner.height / 2
           };
-          canvas.zoom('fit-viewport', center);
+          canvas.zoom('fit-viewport', center); // Fit the diagram to the viewport
         }
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize); // Add resize event listener
 
+    // Cleanup on component unmount
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleResize); // Remove resize event listener
       if (viewerRef.current) {
-        viewerRef.current.destroy();
+        viewerRef.current.destroy(); // Destroy the viewer instance
       }
     };
-  }, [bpmnXML]);
+  }, [bpmnXML]); // Re-run the effect if bpmnXML changes
 
+  // Function to export the BPMN diagram as an SVG image
   const exportToImage = async () => {
     if (viewerRef.current) {
       try {
@@ -85,6 +91,7 @@ const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
   return (
     <div>
       <div className="bpmn-canvas" ref={canvasRef}/>
+      {/* Canvas element for BPMN viewer */}
     </div>
   );
 });

@@ -4,30 +4,34 @@ import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
 import './css/InputBox.css';
 
+// InputBox component to handle user input, including text and file uploads
 const InputBox = ({ onSend }) => {
-  const [message, setMessage] = useState('');
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const fileUploadRef = useRef(null);
+  const [message, setMessage] = useState(''); // State to store the text message
+  const [uploadedFiles, setUploadedFiles] = useState([]); // State to store uploaded files
+  const fileUploadRef = useRef(null); // Reference to the file upload component
 
+  // Function to handle send button click
   const handleSendClick = () => {
-    const trimmedMessage = message.trim();
+    const trimmedMessage = message.trim(); // Trim whitespace from message
     const messagesToSend = [];
 
+    // If there are uploaded files, create file messages
     if (uploadedFiles.length > 0) {
       uploadedFiles.forEach((file) => {
         const fileMessage = {
-          content: trimmedMessage, // Text content (optional)
+          content: trimmedMessage,
           file: {
             name: file.name,
             size: file.size,
             type: file.type,
           },
           isUser: true,
-          type: trimmedMessage ? 'fileWithText' : 'file',
+          type: trimmedMessage ? 'fileWithText' : 'file', // Determine message type
         };
         messagesToSend.push(fileMessage);
       });
     } else if (trimmedMessage) {
+      // If there is a text message, create text message
       const textMessage = {
         content: trimmedMessage,
         isUser: true,
@@ -36,35 +40,41 @@ const InputBox = ({ onSend }) => {
       messagesToSend.push(textMessage);
     }
 
+    // If there are messages to send, call onSend and reset input
     if (messagesToSend.length > 0) {
       onSend?.(messagesToSend, uploadedFiles);
       resetInput();
     }
   };
 
+  // Function to reset input fields
   const resetInput = () => {
     setMessage('');
     setUploadedFiles([]);
-    document.getElementById('messageInput').style.height = '35px';
+    document.getElementById('messageInput').style.height = '35px'; // Reset input height
   };
 
+  // Function to handle file upload
   const handleUpload = (e) => {
     const files = e.files;
     setUploadedFiles(files);
-    fileUploadRef.current.clear();
+    fileUploadRef.current.clear(); // Clear file upload input
   };
 
+  // Function to handle Enter key press
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendClick();
+      handleSendClick(); // Send message on Enter key press
     }
   };
 
+  // Function to handle file deletion
   const handleDeleteFile = (index) => {
     setUploadedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
 
+  // Function to handle paste event for files
   const handlePaste = (e) => {
     const items = e.clipboardData.items;
     const files = [];
@@ -79,6 +89,7 @@ const InputBox = ({ onSend }) => {
     }
   };
 
+  // Add and remove paste event listener
   useEffect(() => {
     window.addEventListener('paste', handlePaste);
     return () => {
@@ -88,6 +99,7 @@ const InputBox = ({ onSend }) => {
 
   return (
     <div className="input-box-container">
+      {/* Display uploaded files */}
       {uploadedFiles.length > 0 && (
         <div className="uploaded-files">
           {uploadedFiles.map((file, index) => (
@@ -130,7 +142,7 @@ const InputBox = ({ onSend }) => {
           icon="pi pi-send"
           className="p-button-rounded p-button-text send-btn"
           onClick={handleSendClick}
-          disabled={message.trim() === '' && uploadedFiles.length === 0}
+          disabled={message.trim() === '' && uploadedFiles.length === 0} // Disable send button if no message or files
         />
       </div>
     </div>

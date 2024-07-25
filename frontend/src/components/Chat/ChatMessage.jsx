@@ -9,6 +9,7 @@ import './css/ChatMessage.css';
 import BpmnRender from "./BpmnRender";
 import LoadingMessage from './LoadingMessage';
 
+// Function to flatten tree data structure into a list of rows with key and label
 const flattenTreeData = (node, parentKey = '') => {
   const rows = [];
   const currentKey = parentKey ? `${parentKey} > ${node.label}` : node.label;
@@ -23,16 +24,17 @@ const flattenTreeData = (node, parentKey = '') => {
   return rows;
 };
 
+// ChatMessage component to display different types of messages
 const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
+  const bpmnRenderRef = useRef(null); // Reference to BpmnRender component
 
-  const bpmnRenderRef = useRef(null);
-
+  // Function to handle CSV download
   const handleDownloadCsv = () => {
     try {
-      const flattenedData = flattenTreeData(message.content[0]);
+      const flattenedData = flattenTreeData(message.content[0]); // Flatten the tree data
       const fields = ['key', 'label'];
       const parser = new Parser({ fields });
-      const csv = parser.parse(flattenedData);
+      const csv = parser.parse(flattenedData); // Convert JSON to CSV
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -46,28 +48,29 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
     }
   };
 
+  // Function to handle SVG download
   const handleDownloadSvg = () => {
     if (bpmnRenderRef.current) {
-      bpmnRenderRef.current.exportToImage();
+      bpmnRenderRef.current.exportToImage(); // Call exportToImage method from BpmnRender component
     }
   };
 
+  // Function to get file extension from filename
   const getExtension = (filename) => {
     const parts = filename.split('.');
     return parts.length > 1 ? parts.pop() : 'Unknown';
   };
 
+  // Function to render the message content based on its type
   const renderMessageContent = () => {
     if (isLoading) {
-      return <div className="loading-message-outer"><LoadingMessage/></div>;
+      return <div className="loading-message-outer"><LoadingMessage/></div>; // Display loading message if loading
     }
     switch (message.type) {
       case 'capabilityMap':
-        console.log(message)
         return (
           <div className="message-block" style={{ minWidth: '80%' }}>
-            <div className="message"><Tree value={[message.content][0]} style={{ fontSize: '1rem' }}/>
-            </div>
+            <div className="message"><Tree value={[message.content][0]} style={{ fontSize: '1rem' }}/></div>
             <div className="message-tool-button-container">
               <Button
                 className="p-button-rounded p-button-icon-only message-tool-button"
@@ -79,7 +82,6 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
           </div>
         );
       case 'bpmnWithPreText':
-        console.log(message)
         return (
           <div className="message-block" style={{ width: '100%' }}>
             <div className="message" style={{ width: '100%' }}>
@@ -88,7 +90,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
                 style={{ marginBottom: '10px' }}
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.preContent.replace(/\n/g, '<br />')) }}
               />
-              <BpmnRender ref={bpmnRenderRef} bpmnXML={message.bpmn}/>
+              <BpmnRender ref={bpmnRenderRef} bpmnXML={message.bpmn}/> {/* Render BPMN diagram */}
               <div
                 className="message-bpmn-text-tail-content"
                 style={{ marginTop: '10px' }}
@@ -107,7 +109,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
         );
       case 'file':
       case 'fileWithText':
-        const extension = getExtension(message.file.name);
+        const extension = getExtension(message.file.name); // Get file extension
         return (
           <div className="message" style={{ minWidth: '30%' }}>
             <div className="message-file-block">

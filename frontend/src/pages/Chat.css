@@ -109,6 +109,7 @@ html, body {
     padding: 10px 8% 0 8%;
     z-index: 900;
 }
+
 @media (max-width: 800px) {
     .input-box-container {
         padding: 10px 5% 0 5%;
@@ -131,6 +132,6 @@ html, body {
     color: var(--primary-color);
 }
 
-.messages{
+.messages {
     scrollbar-gutter: stable both-edges;
 }

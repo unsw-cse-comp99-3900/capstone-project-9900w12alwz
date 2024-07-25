@@ -4,24 +4,24 @@ import { useNavigate } from 'react-router-dom';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import './Chat.css';
-import Sidebar from '../components/Chat/Sidebar';
+import '../components/Chat/css/Sidebar.css'
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import ChatMessage from "../components/Chat/ChatMessage";
 import InputBox from "../components/Chat/InputBox";
 import { post } from '../api';
 
+// Chat component to handle the chat interface
 const Chat = () => {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth >= 600);
-  const [showBubble, setShowBubble] = useState(true);
-  const [sidebarItems, setSidebarItems] = useState([]);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth >= 600); // State to manage sidebar visibility
+  const [showBubble, setShowBubble] = useState(true); // State to manage chat bubble visibility
   const [messages, setMessages] = useState(() => {
-    return JSON.parse(localStorage.getItem('chatMessages') || '[]');
+    return JSON.parse(localStorage.getItem('chatMessages') || '[]'); // Retrieve messages from local storage
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false); // State to manage loading status
+  const messagesEndRef = useRef(null); // Reference to the end of the messages container
+  const navigate = useNavigate(); // Hook to navigate programmatically
 
-  // Convert raw data to tree data
+  // Function to convert raw data to tree data structure
   const convertToTreeData = (obj, parentKey = '', level = 1) => {
     const result = [];
 
@@ -51,10 +51,12 @@ const Chat = () => {
     return result;
   };
 
+  // Function to add a new message to the chat
   const addMessage = useCallback((message) => {
     setMessages(prevMessages => [...prevMessages, message]);
   }, []);
 
+  // Debounce function to limit the rate of execution
   const debounce = (func, delay) => {
     let timeoutId;
     return (...args) => {
@@ -63,6 +65,7 @@ const Chat = () => {
     };
   };
 
+  // Handle sending messages
   const handleSend = useCallback(debounce(async (messagesToSend, uploadedFiles) => {
     messagesToSend.forEach(message => addMessage(message));
 
@@ -109,9 +112,10 @@ const Chat = () => {
     }
   }, 300), [addMessage, convertToTreeData]);
 
+  // Effect to handle side effects when messages or sidebar visibility changes
   useEffect(() => {
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    localStorage.setItem('chatMessages', JSON.stringify(messages)); // Save messages to local storage
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); // Scroll to the end of messages
 
     const updateVh = () => {
       document.documentElement.style.setProperty('--doc-height', `${window.innerHeight}px`);
@@ -134,29 +138,13 @@ const Chat = () => {
     };
   }, [messages, isSidebarVisible]);
 
-  const toggleSidebar = useCallback(() => {
-    setIsSidebarVisible(prev => !prev);
-  }, []);
-
-  const handlePopupClick = useCallback((event, item, menuRef, selectedItemRef) => {
-    event.preventDefault();
-    selectedItemRef.current = item;
-    menuRef.current.toggle(event);
-  }, []);
-
-  const handleOptionClick = useCallback((item) => {
-    setSidebarItems(prevItems => prevItems.filter(i => i.id !== item.id));
-  }, []);
-
-  const stopPropagation = useCallback((e) => {
-    e.stopPropagation();
-  }, []);
-
+  // Function to reset the conversation
   const resetConversation = useCallback(() => {
     setMessages([]);
     localStorage.removeItem('chatMessages');
   }, []);
 
+  // Function to navigate to the admin page
   const goToAdmin = useCallback(() => {
     navigate('/admin');
   }, [navigate]);
@@ -168,9 +156,11 @@ const Chat = () => {
         </div>
         <div className="main-tool-bar">
           <div className={`main-tool-bar-misc`}>
-            <Button icon="pi pi-pen-to-square" className="new-chat-btn" onClick={resetConversation}/>
-            <ThemeSwitcher/>
-            <Button icon="pi pi-cog" onClick={goToAdmin} className="p-button-icon-only navigation-to-admin"/>
+            <Button icon="pi pi-pen-to-square" className="new-chat-btn"
+                    onClick={resetConversation}/> {/* Reset chat button */}
+            <ThemeSwitcher/> {/* Theme switcher button */}
+            <Button icon="pi pi-cog" onClick={goToAdmin}
+                    className="p-button-icon-only navigation-to-admin"/> {/* Navigate to admin */}
           </div>
         </div>
         <div className="messages">
@@ -182,16 +172,17 @@ const Chat = () => {
             </div>
           ) : (
             messages.map((msg, index) => (
-              <ChatMessage key={index} message={msg} isUser={msg.isUser} showBubble={showBubble}/>
+              <ChatMessage key={index} message={msg} isUser={msg.isUser} showBubble={showBubble}/> // Render each message
             ))
           )}
           {isLoading && (
-            <ChatMessage key="loading" message="Loading..." isUser={false} isLoading={true} showBubble={showBubble}/>
+            <ChatMessage key="loading" message="Loading..." isUser={false} isLoading={true} showBubble={showBubble}/> // Render loading message
           )}
           <div ref={messagesEndRef}/>
+          {/* Reference to scroll to end */}
         </div>
         <div className="input-box-container">
-          <InputBox onSend={handleSend}/>
+          <InputBox onSend={handleSend}/> {/* Input box for sending messages */}
         </div>
       </div>
     </div>
