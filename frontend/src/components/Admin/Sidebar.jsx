@@ -96,7 +96,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
               className="p-button-icon-only new-prompt"
               onClick={addNewGroup}
             />
-            <ThemeSwitcher />
+            <ThemeSwitcher/>
             <Button
               icon="pi pi-home"
               className="p-button-rounded p-button-icon-only navigate-to-chat"
@@ -153,7 +153,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
         header="Cannot Delete Group"
         visible={warningVisible}
         style={{ width: '50vw' }}
-        footer={<Button label="OK" onClick={() => setWarningVisible(false)} />}
+        footer={<Button label="OK" onClick={() => setWarningVisible(false)}/>}
         onHide={() => setWarningVisible(false)}
       >
         <p>This group contains prompts and cannot be deleted. Please delete all prompts before deleting the group.</p>
@@ -166,7 +166,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
           style={{ width: '50vw' }}
           footer={
             <>
-              <Button label="No" onClick={() => setGroupToDelete(null)} />
+              <Button label="No" onClick={() => setGroupToDelete(null)}/>
               <Button
                 label="Yes"
                 className="p-button-danger"

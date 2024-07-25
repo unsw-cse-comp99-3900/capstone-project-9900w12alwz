@@ -54,17 +54,17 @@ const Admin = () => {
   //   }
   // };
 
-const fetchGroups = async () => {
-  try {
-    const response = await get('/groups/');
-    setGroups(response.data);
-    if (response.data.length > 0 && !selectedGroup) {
-      setSelectedGroup(response.data[0]);
+  const fetchGroups = async () => {
+    try {
+      const response = await get('/groups/');
+      setGroups(response.data);
+      if (response.data.length > 0 && !selectedGroup) {
+        setSelectedGroup(response.data[0]);
+      }
+    } catch (error) {
+      console.error('Error fetching groups:', error);
     }
-  } catch (error) {
-    console.error('Error fetching groups:', error);
-  }
-};
+  };
 
   const fetchPrompts = async (groupId) => {
     if (!groupId) {

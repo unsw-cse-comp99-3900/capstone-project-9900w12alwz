@@ -10,12 +10,10 @@
     justify-content: space-between;
     align-items: center;
     padding-bottom: 1em;
-
 }
 
 .list-box {
     width: 100%;
-
 }
 
 .prompt-list-item {
@@ -24,10 +22,8 @@
     justify-content: space-between;
     padding: 0.5em 0;
     width: 100%;
-
 }
 
 .prompt-item-right-default {
-
     padding-right: 14px;
 }

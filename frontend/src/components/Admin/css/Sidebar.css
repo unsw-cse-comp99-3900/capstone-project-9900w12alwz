@@ -1,17 +1,12 @@
 .sidebar {
     width: 250px;
-    background: #f4f4f4;
     padding: 1em;
     transition: width 0.3s ease-in-out;
     height: 100vh;
-
     overflow: hidden;
-    background-color: var(--background-color);
-
 }
 
 .admin-container {
-    background-color: var(--background-color);
     color: var(--text-color);
 }
 
@@ -31,7 +26,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
 }
 
 .scroll-panel {
@@ -41,7 +35,6 @@
 
 .list-box {
     width: 100%;
-
 }
 
 .admin-list-box-item {
@@ -50,7 +43,6 @@
     justify-content: space-between;
     padding: 0.5em 0;
     width: 100%;
-
 }
 
 .admin-item-left {
@@ -64,9 +56,7 @@
 
 .admin-list-box-item.default {
     background-color: #d1e7dd;
-
     font-weight: bold;
-
 }
 
 .admin-list-box-item.default .admin-item-right {
