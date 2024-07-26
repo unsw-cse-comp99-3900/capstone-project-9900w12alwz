@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
+import { Toast } from 'primereact/toast';
 import './css/InputBox.css';
 
 // InputBox component to handle user input, including text and file uploads
@@ -9,6 +10,9 @@ const InputBox = ({ onSend }) => {
   const [message, setMessage] = useState(''); // State to store the text message
   const [uploadedFiles, setUploadedFiles] = useState([]); // State to store uploaded files
   const fileUploadRef = useRef(null); // Reference to the file upload component
+  const toast = useRef(null); // Reference to the toast component
+
+  const allowedFileTypes = ['text/plain', 'application/pdf', 'image/jpeg', 'image/png'];
 
   // Function to handle send button click
   const handleSendClick = () => {
@@ -57,7 +61,14 @@ const InputBox = ({ onSend }) => {
   // Function to handle file upload
   const handleUpload = (e) => {
     const files = e.files;
-    setUploadedFiles(files);
+    const validFiles = files.filter(file => allowedFileTypes.includes(file.type));
+    if (validFiles.length !== files.length) {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'The file type you selected is not supported.' });
+    }
+    setUploadedFiles(validFiles);
     fileUploadRef.current.clear(); // Clear file upload input
   };
 
@@ -78,11 +89,23 @@ const InputBox = ({ onSend }) => {
   const handlePaste = (e) => {
     const items = e.clipboardData.items;
     const files = [];
+    const invalidFiles = [];
     for (let i = 0; i < items.length; i++) {
       if (items[i].kind === 'file') {
         const file = items[i].getAsFile();
-        files.push(file);
+        if (allowedFileTypes.includes(file.type)) {
+          files.push(file);
+        } else {
+          invalidFiles.push(file);
+        }
       }
+    }
+    if (invalidFiles.length > 0) {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Some files were not uploaded because they are not supported file types.'
+      });
     }
     if (files.length > 0) {
       setUploadedFiles(prevFiles => [...prevFiles, ...files]);
@@ -99,6 +122,7 @@ const InputBox = ({ onSend }) => {
 
   return (
     <div className="input-box-container">
+      <Toast ref={toast} className="custom-toast" position="top-center"/>
       {/* Display uploaded files */}
       {uploadedFiles.length > 0 && (
         <div className="uploaded-files">
@@ -121,7 +145,7 @@ const InputBox = ({ onSend }) => {
           ref={fileUploadRef}
           mode="basic"
           name="files[]"
-          accept="*"
+          accept=".txt,.pdf,.jpg,.jpeg,.png"
           customUpload
           chooseLabel=""
           chooseOptions={{ icon: 'pi pi-paperclip', className: 'p-button-rounded p-button-text upload-btn' }}
