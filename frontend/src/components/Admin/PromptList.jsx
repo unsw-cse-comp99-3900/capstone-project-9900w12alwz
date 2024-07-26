@@ -7,14 +7,16 @@ import { put, post, get } from '../../api';
 import './css/PromptList.css';
 
 const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSelectedPrompt }) => {
-  const overlayPanelRefs = useRef({});
+  const overlayPanelRefs = useRef({});  // Stores refs for each OverlayPanel
 
+  // Function to handle prompt selection
   const onPromptSelect = (e) => {
     if (e.value && (!selectedPrompt || e.value.id !== selectedPrompt.id)) {
       setSelectedPrompt(e.value);
     }
   };
-
+  
+  // Function to add a new prompt
   const addNewPrompt = async () => {
     const newPrompt = { text: `New Prompt Text`, group: selectedGroup.group_id };
     try {
@@ -26,6 +28,7 @@ const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSel
     }
   };
 
+  // Function to fetch prompts for the selected group
   const fetchGroupPrompts = async () => {
     try {
       const response = await get(`/groups/${selectedGroup.group_id}/prompts/`);
@@ -37,6 +40,7 @@ const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSel
     }
   };
 
+  // Fetch prompts when selectedGroup changes
   useEffect(() => {
     if (selectedGroup) {
       fetchGroupPrompts();
@@ -44,6 +48,7 @@ const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSel
   }, [selectedGroup]);
 
 //   // set default prompt for every group
+
 //   const setDefaultPrompt = async (promptId) => {
 //     try {
 //       // Set all prompts' is_default to 0 first
@@ -68,38 +73,34 @@ const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSel
 //     }
 //   };
 
+  // Function to set a prompt as default
   const setDefaultPrompt = async (promptId) => {
     try {
-      // 获取所有 prompts
+      // Fetch all prompts
       const response = await get('/prompts/');
       const allPrompts = response.data;
-      // console.log('All Prompts:', allPrompts);
 
-      // 将所有 prompts 的 is_default 设置为 0
+      // Reset is_default for all prompts
       const resetPrompts = allPrompts.map((prompt) => ({ ...prompt, is_default: 0 }));
 
-      // 设置选定的 prompt 的 is_default 为 1
+      // Set selected prompt as default
       const updatedPrompts = resetPrompts.map((prompt) =>
         prompt.id === promptId ? { ...prompt, is_default: 1 } : prompt
       );
 
-      // console.log('Updated Prompts:', updatedPrompts);
-
-      // 更新所有 prompts 到后端
+      // Update all prompts in the backend
       await Promise.all(updatedPrompts.map((prompt) => put(`/prompts/${prompt.id}/`, prompt)));
 
-      // 过滤出当前选定 group 的 prompts
+      // Filter prompts for the current group
       const currentGroupPrompts = updatedPrompts.filter((prompt) => prompt.group === selectedGroup.group_id);
 
-      // console.log('Filtered Prompts for Group:', currentGroupPrompts);
-
-      // 更新前端状态
+      // Update state with filtered prompts
       const sortedPrompts = currentGroupPrompts.sort((a, b) => b.is_default - a.is_default);
       setPrompts(sortedPrompts);
       const defaultPrompt = sortedPrompts.find((prompt) => prompt.is_default === 1);
       setSelectedPrompt(defaultPrompt);
 
-      // 隐藏 OverlayPanel
+      // Hide OverlayPanel
       if (overlayPanelRefs.current[promptId]) {
         overlayPanelRefs.current[promptId].current.hide();
       }

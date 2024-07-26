@@ -11,18 +11,20 @@ import { get, post, del } from '../../api';
 import ThemeSwitcher from "../ThemeSwitcher";
 
 const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup, setSelectedGroup, setGroups }) => {
-  const [visibleOverlay, setVisibleOverlay] = useState(null);
-  const [warningVisible, setWarningVisible] = useState(false);
-  const [groupToDelete, setGroupToDelete] = useState(null);
-  const overlayPanelRefs = useRef({});
+  const [visibleOverlay, setVisibleOverlay] = useState(null);  // Tracks visible overlay panel
+  const [warningVisible, setWarningVisible] = useState(false);  // Controls visibility of warning dialog
+  const [groupToDelete, setGroupToDelete] = useState(null);  // Stores group to be deleted
+  const overlayPanelRefs = useRef({});  // References for overlay panels
   const navigate = useNavigate();
 
+  // Handle group selection
   const onGroupSelect = (e) => {
     if (e.value && (!selectedGroup || e.value.group_id !== selectedGroup.group_id)) {
       setSelectedGroup(e.value);
     }
   };
 
+  // Handle window resize events to toggle sidebar collapse
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsPanelCollapsed(true);
@@ -31,10 +33,12 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
     }
   };
 
+  // Navigate to chat page
   const goToChat = () => {
     navigate('/chat');
   };
 
+  // Add a new group
   const addNewGroup = async () => {
     const newGroup = { group_name: `New Group` };
     try {
@@ -46,6 +50,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
     }
   };
 
+  // Check if the group is empty (no prompts)
   const checkGroupEmpty = async (groupId) => {
     try {
       const response = await get(`/groups/${groupId}/prompts/`);
@@ -64,6 +69,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
     }
   };
 
+  // Handle delete group action
   const deleteGroup = async (groupId) => {
     try {
       await del(`/groups/${groupId}/`);
@@ -75,6 +81,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
     }
   };
 
+  // Delete a group
   useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);

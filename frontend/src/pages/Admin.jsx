@@ -5,31 +5,36 @@ import { InputText } from 'primereact/inputtext';
 import './Admin.css';
 import Sidebar from '../components/Admin/Sidebar';
 import PromptList from '../components/Admin/PromptList';
-import { ListBox } from 'primereact/listbox';
 
 import { get, post, put, del } from '../api';
 
 const Admin = () => {
+  // State management for groups, selected group, prompts, selected prompt, and sidebar collapse
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [prompts, setPrompts] = useState([]);
   const [selectedPrompt, setSelectedPrompt] = useState(null);
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
+  // Fetch groups when component mounts
   useEffect(() => {
     fetchGroups();
   }, []);
 
+
+  // Fetch prompts when selected group changes
   useEffect(() => {
     fetchPrompts();
   }, []);
 
+  // Set default prompt or first prompt if no default is set
   useEffect(() => {
     if (prompts.length > 0 && (!selectedPrompt || !prompts.some(p => p.id === selectedPrompt.id))) {
       setSelectedPrompt(prompts.find(p => p.is_default === 1) || prompts[0]);
     }
   }, [prompts]);
 
+  // Fetch prompts based on selected group
   useEffect(() => {
     if (selectedGroup) {
       if (selectedGroup.group_id) {
@@ -43,17 +48,7 @@ const Admin = () => {
     }
   }, [selectedGroup]);
 
-  // const fetchPrompts = async () => {
-  //   try {
-  //     const response = await get('/prompts/');
-  //     const sortedPrompts = response.data.sort((a, b) => b.is_default - a.is_default);
-  //     setPrompts(sortedPrompts);
-  //     setSelectedPrompt(sortedPrompts.find(p => p.is_default === 1) || sortedPrompts[0]);
-  //   } catch (error) {
-  //     console.error('Error fetching prompts:', error);
-  //   }
-  // };
-
+  // Fetch groups from the server
   const fetchGroups = async () => {
     try {
       const response = await get('/groups/');
@@ -66,46 +61,21 @@ const Admin = () => {
     }
   };
 
+  // Fetch prompts for a specific group
   const fetchPrompts = async (groupId) => {
     if (!groupId) {
       console.error('Group ID is undefined. Cannot fetch prompts.');
-      return; // 立即退出函数，避免后续操作
+      return; // Exit function if groupId is undefined
     }
-
-    // console.log('Fetching prompts for group_id:', groupId);
     try {
       const response = await get(`/groups/${groupId}/prompts/`);
-      // console.log('Prompts fetched:', response.data);
-      // 继续处理响应数据
+      // Handle response data
     } catch (error) {
       console.error('Error fetching prompts:', error);
     }
   };
 
-  const addNewPrompt = async () => {
-    const newPrompt = { text: `New Prompt Text`, is_default: 0 };
-    try {
-      const response = await post('/prompts/', newPrompt);
-      const updatedPrompts = [...prompts, response.data];
-      const sortedPrompts = updatedPrompts.sort((a, b) => b.is_default - a.is_default);
-      setPrompts(sortedPrompts);
-      setSelectedPrompt(response.data);
-    } catch (error) {
-      console.error('Error creating prompt:', error);
-    }
-  };
-
-  const addNewGroup = async () => {
-    const newGroup = { name: `New Group` };
-    try {
-      const response = await post('/groups/', newGroup);
-      setGroups([...groups, response.data]);
-      setSelectedGroup(response.data);
-    } catch (error) {
-      console.error('Error creating group:', error);
-    }
-  };
-
+  // Delete a prompt
   const deletePrompt = async (promptId) => {
     try {
       await del(`/prompts/${promptId}/`);
@@ -123,11 +93,6 @@ const Admin = () => {
       <Sidebar
         isPanelCollapsed={isPanelCollapsed}
         setIsPanelCollapsed={setIsPanelCollapsed}
-        // prompts={prompts}
-        // selectedPrompt={selectedPrompt}
-        // setSelectedPrompt={setSelectedPrompt}
-        // addNewPrompt={addNewPrompt}
-        // setPrompts={setPrompts}
         groups={groups}
         selectedGroup={selectedGroup}
         setSelectedGroup={setSelectedGroup}
