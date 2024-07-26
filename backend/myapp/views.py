@@ -21,7 +21,10 @@ class ChatAPIView(APIView):
         question = request.data.get('question')
         upload_file = request.FILES.get('image')
         if not question:
-            return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
+            if not upload_file:
+                return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                question = "This is a task to convert different diagrams to a BPMN 2.0 XML format."
 
         print("user initial question", question)
         feedback = self.bot.answer(question, upload_file)
