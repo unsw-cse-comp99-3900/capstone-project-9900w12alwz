@@ -19,12 +19,12 @@ class ChatAPIView(APIView):
     def post(self, request, *args, **kwargs):
         """处理 POST 请求，返回聊天机器人的回答"""
         question = request.data.get('question')
-        upload_image = request.FILES.get('image')
+        upload_file = request.FILES.get('image')
         if not question:
             return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        print(question)
-        feedback = self.bot.answer(question,upload_image)
+        print("user initial question", question)
+        feedback = self.bot.answer(question, upload_file)
         feedback_lower = feedback.lower()  # 将 feedback 转换为小写
         type = "capabilityMap" if "```json" in feedback_lower else "image" if "```xml" in feedback_lower else "text"
 

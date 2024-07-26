@@ -1,10 +1,18 @@
 from django.db import models
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain.memory import ChatMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory
 import base64
 import requests
+from io import BytesIO
+import pdfplumber
+from enum import Enum
 
+
+class FileType(Enum):
+    FILE = 'FILE'
+    IMAGE = 'IMAGE'
+    UNKNOWN = 'UNKNOWN'
 
 class ChatBot:
     _instance = None
@@ -23,12 +31,12 @@ class ChatBot:
         )
         self.chat_history = ChatMessageHistory()
 
-    def answer(self, question, image=None):
-        content = self.chain(question, image)
+    def answer(self, question, upload_file=None):
+        content = self.chain(question, upload_file)
         return content
 
     # def chain(self, question, image_path="logical_dataflow.png"):
-    def chain(self, question, image=None):
+    def chain(self, question, upload_file=None):
         llm = self.chatmodel
         systemMsgs = []
         defaultPrompt = """
@@ -40,7 +48,7 @@ class ChatBot:
         systemMsgDefault = {"type": "text", "text": f"{defaultPrompt}"}
         systemMsgs.append(systemMsgDefault)
 
-        if image is None:
+        if upload_file is None:
             # prompt from rules
             prompt_rules = f"""
             Based on the user's input, here are some conversational rules to follow:
@@ -110,11 +118,20 @@ class ChatBot:
             )
 
         else:
-            base64_image = base64.b64encode(image.read()).decode('utf-8')
+            human_content_list = []
+            human_content_list.append({"type": "text", "text": f"{question}"})
+
+            file_result = self.process_uploaded_file(upload_file)
+            file_content = file_result['content']
+            if file_result['type'] == FileType.FILE.value:
+                human_content_list.append({"type": "text", "text": f"{file_content}"})
+            if file_result['type'] == FileType.IMAGE.value:
+                human_content_list.append({"type": "image_url", "image_url": {"url": f"data:image/png;base64,{file_content}"}},)
+            
             systemMsg = SystemMessage(
                 content=[
                     {"type": "text",
-                     "text": """
+                    "text": """
                      you are a bot to convert different diagrams to a BPMN 2.0 XML format by following these instructions:
 
 1. Create a BPMN 2.0 XML format that includes graphical information for all process elements. Ensure not to omit any parts.
@@ -235,35 +252,8 @@ This example includes both <bpmndi:BPMNShape> and <bpmndi:BPMNEdge> elements wit
                     """}
                 ]
             )
-
-            # systemMsg = SystemMessage(
-            #     content=[
-            #         {"type": "text",
-            #          "text":
-            #         """
-            #          - **Request Type**: you are a bot to convert the different diagrams a detailed BPMN 2.0 XML by giving image.
-            #          - **Content Details**:
-            #         1. **Graphical Details**: The XML should include comprehensive graphical representations for each process element, capturing the visual aspects thoroughly.
-            #         2. **Position and Dimensions**: Specify the exact positions and dimensions for each element to ensure precise layout representation.
-            #         3. **Connections Detailing**: Each connection between the elements should be detailed, showing how each element interacts within the process.
-            #         4. **Layout Accuracy**: The XML must accurately reflect the complete layout and structure as depicted in the provided diagram, ensuring that the spatial and relational integrity is maintained.
-            #         5. **Namespace and Specific Elements**: All BPMN elements must include the 'bpmn:' namespace prefix. Additionally, mention any specific elements or attributes that are crucial for the XML configuration.
-            #         6. When presenting XML content, format it using triple backticks and label it as XML like this
-            #         ```xml
-            #         xml content
-            #         ```
-            #         """
-            #          }
-            #     ]
-            # )
-
-
-            huamanMsg = HumanMessage(
-                content=[
-                    {"type": "text", "text": f"{question}"},
-                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{base64_image}"}},
-                ],
-            )
+            huamanMsg = HumanMessage(content=human_content_list)
+            print(huamanMsg)
 
         self.chat_history.messages.extend([huamanMsg, systemMsg])
 
@@ -271,7 +261,35 @@ This example includes both <bpmndi:BPMNShape> and <bpmndi:BPMNEdge> elements wit
         self.chat_history.add_ai_message(response)
         print(response.content)
         return response.content
+    
+    def process_uploaded_file(self, upload_file):
+        file_type_ext = upload_file.name.split(".")[-1].lower()
+        if file_type_ext == 'txt':
+            file_type = FileType.FILE
+            file_content = upload_file.read().decode('utf-8')
+            content = file_content
 
+        elif file_type_ext == 'pdf':
+            file_type = FileType.FILE
+            file_content = upload_file.read()
+            file_like_object = BytesIO(file_content)
+            
+            text = ""
+            with pdfplumber.open(file_like_object) as pdf:
+                for page in pdf.pages:
+                    text += page.extract_text()       
+            content = text
+    
+        elif file_type_ext in ['jpg', 'jpeg', 'png']:
+            file_type = FileType.IMAGE
+            base64_image = base64.b64encode(upload_file.read()).decode('utf-8')
+            content = base64_image
+        
+        else:
+            file_type = FileType.UNKNOWN
+            content = "Unsupported file type"
+
+        return {"type": file_type.value, "content": content}
 
 class Prompt(models.Model):
     id = models.AutoField(primary_key=True)
