@@ -1,13 +1,24 @@
+# Import standard library modules
+import os
+import base64
+from io import BytesIO
+from enum import Enum
+
+# Import third-party libraries
+import requests
+import pdfplumber
+from dotenv import load_dotenv
+
+# Import Django modules
 from django.db import models
+
+# Import LangChain related modules
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_community.chat_message_histories import ChatMessageHistory
-import base64
-import requests
-from io import BytesIO
-import pdfplumber
-from enum import Enum
 
+# Load environment variables
+load_dotenv()
 
 class FileType(Enum):
     FILE = 'FILE'
@@ -27,7 +38,7 @@ class ChatBot:
         self.chatmodel = ChatOpenAI(
             model="gpt-4-turbo",
             temperature=0,
-            openai_api_key="sk-student-group-1-key-TO4Cg5exvtuWKqfwRK2hT3BlbkFJ5rE7Cy1yjfTQYgN2hDbX"
+            openai_api_key=os.getenv("OPENAI_API_KEY")
         )
         self.chat_history = ChatMessageHistory()
 
@@ -258,8 +269,8 @@ This example includes both <bpmndi:BPMNShape> and <bpmndi:BPMNEdge> elements wit
         self.chat_history.messages.extend([huamanMsg, systemMsg])
 
         response = llm.invoke(self.chat_history.messages)
+        print("Initial Res =>", response)
         self.chat_history.add_ai_message(response)
-        print(response.content)
         return response.content
     
     def process_uploaded_file(self, upload_file):
