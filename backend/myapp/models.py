@@ -9,6 +9,8 @@ import requests
 import pdfplumber
 from dotenv import load_dotenv
 
+import logging
+
 # Import Django modules
 from django.db import models
 
@@ -105,20 +107,37 @@ class ChatBot:
             url = "http://localhost:8000/api/prompts/default/"
             headers = {
                 'accept': 'application/json',
-                'X-CSRFToken': 'U8tJVz5Wl4s2Mtz3OjNd9cwhl2TqNYnKeZrdeAsvYWKicxfhaN8UGEJsxsELYorJ'
+                'X-CSRFToken': 'CJXX8NrHT3MadHMw7DkQGlzqHbYlBrwURqMhqvT08axpSFEhufdu2WUHxQbOWdf4'
             }
             # 发送GET请求并获取响应
             response = requests.get(url, headers=headers)
+
             # 将响应转换为JSON格式
             prompt_content = response.json()
-            # 提取text字段的内容
-            user_prompt = prompt_content.get('text', '')
-            # prompt_ = f"""
-            # Based on the user's input, here are some conversational rules to follow:
-            #     If the user's question involves {prompt_content} follow the corresponding instruction.
-            # """
-            print(user_prompt)
-            systemMsgs.append({"type": "text", "text": f"{user_prompt}"})
+
+            user_prompt = ""
+            # 初始化user_prompt为一个列表
+            user_prompt = []
+
+            # 处理返回的列表
+            if isinstance(prompt_content, list):
+                for prompt in prompt_content:
+                    user_prompt.append(prompt.get('text', ''))
+            else:
+                # 如果意外地返回了一个字典，处理这个情况
+                user_prompt.append(prompt_content.get('text', ''))
+
+            # 用逗号分割所有内容
+            user_prompt_str = ', '.join(user_prompt)
+
+            # 配置日志记录
+            logging.basicConfig(level=logging.INFO)
+            logger = logging.getLogger(__name__)
+
+            # 使用日志记录输出
+            logger.info(f"User Prompt: {user_prompt_str}")
+
+            systemMsgs.append({"type": "text", "text": f"{user_prompt_str}"})
 
             systemMsg = SystemMessage(content=systemMsgs)
 

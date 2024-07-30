@@ -129,18 +129,16 @@ class PromptDetailAPIView(APIView):
 
 class DefaultPromptAPIView(APIView):
     @swagger_auto_schema(
-        operation_id="get_default_prompt",
-        operation_summary="Retrieve the default prompt",
-        operation_description="Retrieve the prompt marked as is_default=1.",
-        responses={200: PromptSerializer, 500: "Internal Server Error"}
+        operation_id="get_default_prompts",
+        operation_summary="Retrieve the default prompts",
+        operation_description="Retrieve the prompts marked as is_default=True.",
+        responses={200: PromptSerializer(many=True), 500: "Internal Server Error"}
     )
     def get(self, request, *args, **kwargs):
         try:
-            prompt = Prompt.objects.get(is_default=True)
-            serializer = PromptSerializer(prompt)
+            prompts = Prompt.objects.filter(is_default=True)
+            serializer = PromptSerializer(prompts, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Prompt.DoesNotExist:
-            return Response({"error": "Default prompt not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
