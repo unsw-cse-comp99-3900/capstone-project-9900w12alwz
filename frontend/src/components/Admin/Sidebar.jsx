@@ -11,7 +11,7 @@ import { get, post, del } from '../../api';
 import ThemeSwitcher from "../ThemeSwitcher";
 
 const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup, setSelectedGroup, setGroups }) => {
-  const [setVisibleOverlay] = useState(null);  // Tracks visible overlay panel
+  const [visibleOverlay, setVisibleOverlay] = useState(null);  // Tracks visible overlay panel
   const [warningVisible, setWarningVisible] = useState(false);  // Controls visibility of warning dialog
   const [groupToDelete, setGroupToDelete] = useState(null);  // Stores group to be deleted
   const overlayPanelRefs = useRef({});  // References for overlay panels
