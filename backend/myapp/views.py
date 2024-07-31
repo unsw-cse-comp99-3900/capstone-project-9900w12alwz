@@ -17,7 +17,7 @@ class ChatAPIView(APIView):
         responses={200: response_schema}
     )
     def post(self, request, *args, **kwargs):
-        """处理 POST 请求，返回聊天机器人的回答"""
+        """Process POST request, return chatbot reply"""
         question = request.data.get('question')
         upload_file = request.FILES.get('image')
         if not question:
@@ -28,7 +28,7 @@ class ChatAPIView(APIView):
 
         print("user initial question", question)
         feedback = self.bot.answer(question, upload_file)
-        feedback_lower = feedback.lower()  # 将 feedback 转换为小写
+        feedback_lower = feedback.lower()
         type = "capabilityMap" if "```json" in feedback_lower else "image" if "```xml" in feedback_lower else "text"
 
         response_data = {

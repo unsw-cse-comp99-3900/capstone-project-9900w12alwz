@@ -2,7 +2,7 @@ from rest_framework import serializers
 from drf_yasg import openapi
 from .models import Prompt, PromptGroup
 
-# 定义 Swagger 文档中的请求体和响应体
+# Define the request body and response body in the Swagger document
 question_schema = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
