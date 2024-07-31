@@ -17,14 +17,14 @@ describe('<ThemeSwitcher />', () => {
   });
 
   it('should apply light theme by default', () => {
-    cy.mount(<ThemeSwitcher />);
+    cy.mount(<ThemeSwitcher/>);
 
     // Check if the light theme is applied
     cy.get('#theme-link').should('have.attr', 'href', '/themes/viva-light/theme.css');
   });
 
   it('should toggle to dark theme when button is clicked', () => {
-    cy.mount(<ThemeSwitcher />);
+    cy.mount(<ThemeSwitcher/>);
 
     // Click the button to switch to dark theme
     cy.get('.theme-switcher').click();
@@ -44,14 +44,14 @@ describe('<ThemeSwitcher />', () => {
       win.localStorage.setItem('theme', 'dark');
     });
 
-    cy.mount(<ThemeSwitcher />);
+    cy.mount(<ThemeSwitcher/>);
 
     // Check if the dark theme is applied
     cy.get('#theme-link').should('have.attr', 'href', '/themes/viva-dark/theme.css');
   });
 
   it('should toggle back to light theme when button is clicked again', () => {
-    cy.mount(<ThemeSwitcher />);
+    cy.mount(<ThemeSwitcher/>);
 
     // Click the button to switch to dark theme
     cy.get('.theme-switcher').click();

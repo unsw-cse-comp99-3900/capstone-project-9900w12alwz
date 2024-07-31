@@ -21,19 +21,19 @@
     margin-right: 5px;
     margin-bottom: 5px;
     font-size: 0.9em;
-    max-width: 100%; /* Ensure the file item doesn't exceed container width */
+    max-width: 100%;
 }
 
 .file-list-file-name {
-    max-width: 150px; /* Adjust max-width as needed */
+    max-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-right: 10px; /* Add space between text and delete button */
+    margin-right: 10px;
 }
 
 .file-list-remove-item-btn {
-    flex-shrink: 0; /* Prevent the button from shrinking */
+    flex-shrink: 0;
 }
 
 .input-box {

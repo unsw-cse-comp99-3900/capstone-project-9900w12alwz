@@ -9,6 +9,7 @@ import Admin from './pages/Admin';
 const App = () => {
 
   return (
+    // Routers
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/chat" />} />

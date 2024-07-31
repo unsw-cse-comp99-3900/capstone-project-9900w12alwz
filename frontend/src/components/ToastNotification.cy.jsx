@@ -15,14 +15,14 @@ describe('<ToastNotification />', () => {
 
       return (
         <div>
-          <ToastNotification ref={toastRef} />
+          <ToastNotification ref={toastRef}/>
           <button onClick={showToast}>Show Toast</button>
         </div>
       );
     };
 
     // Mount the wrapper component
-    cy.mount(<Wrapper />);
+    cy.mount(<Wrapper/>);
 
     // Click the button to show the toast notification
     cy.get('button').click();

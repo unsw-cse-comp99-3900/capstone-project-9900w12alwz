@@ -70,16 +70,17 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
     if (isLoading) {
       return (
         <div className="loading-message-outer">
-          <LoadingMessage />
+          <LoadingMessage/>
         </div>
       ); // Display loading message if loading
     }
     switch (message.type) {
+      // Render Capability Map
       case "capabilityMap":
         return (
           <div className="message-block" style={{ minWidth: "80%" }}>
             <div className="message">
-              <Tree value={[message.content][0]} style={{ fontSize: "1rem" }} />
+              <Tree value={[message.content][0]} style={{ fontSize: "1rem" }}/>
             </div>
             <div className="message-tool-button-container">
               <Button
@@ -94,6 +95,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
             </div>
           </div>
         );
+      // Render BPMN Diagram
       case "bpmnWithPreText":
         return (
           <div className="message-block" style={{ width: "100%" }}>
@@ -107,7 +109,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
                   ),
                 }}
               />
-              <BpmnRender ref={bpmnRenderRef} bpmnXML={message.bpmn} />{" "}
+              <BpmnRender ref={bpmnRenderRef} bpmnXML={message.bpmn}/>{" "}
               {/* Render BPMN diagram */}
               <div
                 className="message-bpmn-text-tail-content"
@@ -132,6 +134,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
             </div>
           </div>
         );
+      // Render File and File with text
       case "file":
       case "fileWithText":
         const extension = getExtension(message.file.name); // Get file extension
@@ -164,6 +167,7 @@ const ChatMessage = ({ message, isUser, isLoading, showBubble }) => {
             )}
           </div>
         );
+      // Render with default style
       default:
         const sanitizedContent = DOMPurify.sanitize(
           message.content.replace(/\n/g, "<br />")

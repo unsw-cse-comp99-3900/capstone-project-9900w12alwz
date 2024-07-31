@@ -11,7 +11,7 @@ import { get, post, del } from '../../api';
 import ThemeSwitcher from "../ThemeSwitcher";
 
 const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup, setSelectedGroup, setGroups }) => {
-  const [visibleOverlay, setVisibleOverlay] = useState(null);  // Tracks visible overlay panel
+  const [setVisibleOverlay] = useState(null);  // Tracks visible overlay panel
   const [warningVisible, setWarningVisible] = useState(false);  // Controls visibility of warning dialog
   const [groupToDelete, setGroupToDelete] = useState(null);  // Stores group to be deleted
   const overlayPanelRefs = useRef({});  // References for overlay panels
@@ -75,7 +75,7 @@ const Sidebar = ({ isPanelCollapsed, setIsPanelCollapsed, groups, selectedGroup,
       await del(`/groups/${groupId}/`);
       const updatedGroups = groups.filter(group => group.group_id !== groupId);
       setGroups(updatedGroups);
-      setSelectedGroup(updatedGroups.length > 0 ? updatedGroups[0] : null); // 选择第一个 group 或 null
+      setSelectedGroup(updatedGroups.length > 0 ? updatedGroups[0] : null);
     } catch (error) {
       console.error('Error deleting group:', error);
     }

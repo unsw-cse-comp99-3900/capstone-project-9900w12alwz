@@ -2,7 +2,7 @@ import React from 'react'
 import BpmnRender from './BpmnRender'
 
 describe('<BpmnRender />', () => {
-
+  // Sample data
   const bpmnXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
     "<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
     "                  xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\"\n" +
@@ -98,7 +98,6 @@ describe('<BpmnRender />', () => {
 
 
   it('renders', () => {
-    // see: https://on.cypress.io/mounting-react
     cy.mount(<BpmnRender bpmnXML={bpmnXML}/>)
   })
 })

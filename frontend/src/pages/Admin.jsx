@@ -6,7 +6,7 @@ import './Admin.css';
 import Sidebar from '../components/Admin/Sidebar';
 import PromptList from '../components/Admin/PromptList';
 
-import { get, post, put, del } from '../api';
+import { get, put, del } from '../api';
 
 const Admin = () => {
   // State management for groups, selected group, prompts, selected prompt, and sidebar collapse
@@ -40,11 +40,7 @@ const Admin = () => {
       if (selectedGroup.group_id) {
         // console.log('Fetching prompts for group:', selectedGroup.group_id);
         fetchPrompts(selectedGroup.group_id);
-      } else {
-        console.warn('Selected group does not have a valid group_id:', selectedGroup);
       }
-    } else {
-      console.warn('Selected group is undefined.');
     }
   }, [selectedGroup]);
 
@@ -64,7 +60,6 @@ const Admin = () => {
   // Fetch prompts for a specific group
   const fetchPrompts = async (groupId) => {
     if (!groupId) {
-      console.error('Group ID is undefined. Cannot fetch prompts.');
       return; // Exit function if groupId is undefined
     }
     try {

@@ -66,7 +66,8 @@ const InputBox = ({ onSend }) => {
       toast.current.show({
         severity: 'warn',
         summary: 'Warning',
-        detail: 'The file type you selected is not supported.' });
+        detail: 'The file type you selected is not supported.'
+      });
     }
     setUploadedFiles(validFiles);
     fileUploadRef.current.clear(); // Clear file upload input
@@ -100,6 +101,7 @@ const InputBox = ({ onSend }) => {
         }
       }
     }
+    // Show the toast if file not supported
     if (invalidFiles.length > 0) {
       toast.current.show({
         severity: 'warn',

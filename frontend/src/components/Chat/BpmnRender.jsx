@@ -25,13 +25,14 @@ const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
         const canvas = viewerRef.current.get('canvas');
         if (canvas && canvas.viewbox) {
           const { inner } = canvas.viewbox();
+          // Set canvas location
           const center = {
             x: inner.x + inner.width / 2,
             y: inner.y + inner.height / 2
           };
           canvas.zoom('fit-viewport', center); // Fit the diagram to the viewport
         } else {
-          console.error('Canvas or viewbox not initialized');
+          console.error('Canvas or view box not initialized');
         }
       } catch (e) {
         console.error('Failed to render BPMN diagram:', e);
@@ -46,6 +47,7 @@ const BpmnRender = forwardRef(({ bpmnXML }, ref) => {
         const canvas = viewerRef.current.get('canvas');
         if (canvas && canvas.viewbox) {
           const { inner } = canvas.viewbox();
+          // Recalculate the canvas location
           const center = {
             x: inner.x + inner.width / 2,
             y: inner.y + inner.height / 2

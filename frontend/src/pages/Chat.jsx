@@ -15,7 +15,7 @@ const Chat = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(
     window.innerWidth >= 600
   ); // State to manage sidebar visibility
-  const [showBubble, setShowBubble] = useState(true); // State to manage chat bubble visibility
+  const [showBubble] = useState(true); // State to manage chat bubble visibility
   const [messages, setMessages] = useState(() => {
     return JSON.parse(localStorage.getItem("chatMessages") || "[]"); // Retrieve messages from local storage
   });
@@ -30,7 +30,7 @@ const Chat = () => {
     Object.keys(obj).forEach((key, index) => {
       const uniqueKey = parentKey ? `${parentKey}.${index}` : `${index}`;
       const label = `${key}`;
-
+      // The child items array
       let children = [];
       if (Array.isArray(obj[key])) {
         children = obj[key].map((item, i) => ({
@@ -41,7 +41,7 @@ const Chat = () => {
       } else if (typeof obj[key] === "object" && obj[key] !== null) {
         children = convertToTreeData(obj[key], uniqueKey, level + 1);
       }
-
+      // Create a node
       const node = {
         key: uniqueKey,
         label: label,
@@ -72,25 +72,30 @@ const Chat = () => {
     debounce(async (messagesToSend, uploadedFiles) => {
       messagesToSend.forEach((message) => addMessage(message));
 
+      // Text message
       const textMessages = messagesToSend
         .filter((message) => ["text", "fileWithText"].includes(message.type))
         .map((message) => message.content)
         .join(" ");
 
+      // Create a formData object to store file
       const formData = new FormData();
       formData.append("question", textMessages);
       uploadedFiles.forEach((file) => {
         formData.append(`image`, file);
       });
 
+      // Set the loading status
       setIsLoading(true);
 
+      // Try to sent message
       try {
         const response = await post("/chat/", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         const { answer, type } = response.data.answer;
 
+        // Detect content type
         if (type === "capabilityMap") {
           const jsonString = answer.match(/```JSON\s+({[\s\S]*?})\s+```/)[1];
           const capabilityMap = JSON.parse(jsonString);
@@ -121,11 +126,12 @@ const Chat = () => {
     [addMessage, convertToTreeData]
   );
 
-  // Effect to handle side effects when messages or sidebar visibility changes
+  // Handle screen size change
   useEffect(() => {
     localStorage.setItem("chatMessages", JSON.stringify(messages)); // Save messages to local storage
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the end of messages
 
+    // The View height used to obtain the actual screen height of the mobile device
     const updateVh = () => {
       document.documentElement.style.setProperty(
         "--doc-height",
@@ -135,6 +141,7 @@ const Chat = () => {
     updateVh();
     window.addEventListener("resize", updateVh);
 
+    // Handle sidebar visible
     const handleResize = () => {
       if (window.innerWidth < 600 && isSidebarVisible) {
         setIsSidebarVisible(false);

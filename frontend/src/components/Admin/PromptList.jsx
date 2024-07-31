@@ -15,7 +15,7 @@ const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSel
       setSelectedPrompt(e.value);
     }
   };
-  
+
   // Function to add a new prompt
   const addNewPrompt = async () => {
     const newPrompt = { text: `New Prompt Text`, group: selectedGroup.group_id };
@@ -46,32 +46,6 @@ const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSel
       fetchGroupPrompts();
     }
   }, [selectedGroup]);
-
-//   // set default prompt for every group
-
-//   const setDefaultPrompt = async (promptId) => {
-//     try {
-//       // Set all prompts' is_default to 0 first
-//       const resetPrompts = prompts.map((prompt) => ({ ...prompt, is_default: 0 }));
-
-//       // Then set the selected prompt's is_default to 1
-//       const updatedPrompts = resetPrompts.map((prompt) =>
-//         prompt.id === promptId ? { ...prompt, is_default: 1 } : prompt
-//       );
-
-//       // Update all prompts in the backend
-//       await Promise.all(updatedPrompts.map((prompt) => put(`/prompts/${prompt.id}/`, prompt)));
-
-//       // Sort prompts to bring the default one on top
-//       const sortedPrompts = updatedPrompts.sort((a, b) => b.is_default - a.is_default);
-
-//       // Update state with sorted prompts and the newly set default prompt
-//       setPrompts(sortedPrompts);
-//       setSelectedPrompt(sortedPrompts.find((prompt) => prompt.is_default === 1) || sortedPrompts[0]);
-//     } catch (error) {
-//       console.error('Error setting default prompt:', error);
-//     }
-//   };
 
   // Function to set a prompt as default
   const setDefaultPrompt = async (promptId) => {
@@ -165,21 +139,3 @@ const PromptList = ({ selectedGroup, prompts, setPrompts, selectedPrompt, setSel
 };
 
 export default PromptList;
-
-// import React from 'react';
-// import { ListBox } from 'primereact/listbox';
-// import './css/PromptList.css';
-
-// const PromptList = ({ selectedPrompt, prompts, setSelectedPrompt }) => {
-//   return (
-//     <ListBox
-//       value={selectedPrompt}
-//       options={prompts}
-//       onChange={(e) => setSelectedPrompt(e.value)}
-//       optionLabel="name"
-//       className="prompt-list"
-//     />
-//   );
-// };
-
-// export default PromptList;
